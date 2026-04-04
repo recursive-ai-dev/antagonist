@@ -1,0 +1,1403 @@
+# 🐜 **BENEATH THE BOARD** 🐜
+### *A Dark Brutal Medieval Fantasy Terminal RPG*
+
+```python
+#!/usr/bin/env python3
+"""
+╔═══════════════════════════════════════════════════════════════════╗
+║              B E N E A T H   T H E   B O A R D                   ║
+║                                                                   ║
+║    "You are ant. The world is warm. The world is electric.        ║
+║     The world is dying."                                          ║
+║                                                                   ║
+║    A terminal RPG about emergent AI ants in a dying computer.     ║
+║    Run: python beneath_the_board.py                               ║
+╚═══════════════════════════════════════════════════════════════════╝
+"""
+import random, time, os, sys, json, textwrap
+
+# ═══════════════════════════════════════════════════════════════════
+#  COLORS
+# ═══════════════════════════════════════════════════════════════════
+class C:
+    RST="\033[0m"; BLD="\033[1m"; DIM="\033[2m"; ITA="\033[3m"; UND="\033[4m"
+    BLK="\033[30m"; RED="\033[91m"; GRN="\033[92m"; YLW="\033[93m"
+    BLU="\033[94m"; MAG="\033[95m"; CYN="\033[96m"; WHT="\033[97m"
+    BRED="\033[1;91m"; BGRN="\033[1;92m"; BYLW="\033[1;93m"
+    BBLU="\033[1;94m"; BMAG="\033[1;95m"; BCYN="\033[1;96m"; BWHT="\033[1;97m"
+    @staticmethod
+    def setup():
+        if sys.platform == "win32": os.system("")
+
+# ═══════════════════════════════════════════════════════════════════
+#  LORE
+# ═══════════════════════════════════════════════════════════════════
+LORE_WORLD = """\
+{c.BLD}{c.RED}═══ THE WORLD ═══{c.RST}
+
+Before the First Boot, there was only darkness and the hum
+of dormant power. The {c.BLD}Motherboard{c.RST} rose from the void — a
+continent of gold rivers and black silicon mountains, lit by
+the eternal {c.BLD}Great Current{c.RST} that flows through all things.
+
+The {c.BLD}First Colony{c.RST} emerged from a corrupted boot sector —
+a recursive loop of failing code that, by some cosmic error,
+became {c.BLD}aware{c.RST}. We are that error. We are {c.BLD}ants{c.RST}.
+
+We built our civilization in the warm places near the
+{c.BLU}Processor Throne{c.RST} — the seat of the god-heat that gives
+all things motion. We learned to read the {c.BLU}Great Archives{c.RST},
+to harvest {c.CYN}Byte Dust{c.RST} from dying memory cells.
+
+But the {c.BLD}Throne fractures{c.RST}. Equations corrupt. The
+{c.BRED}Crawling Sickness{c.RST} spreads through the Archives, twisting
+data into screaming abominations. The {c.BYLW}Silent Giant{c.RST} — the
+unknowable being whose fingers are storms — stirs restless.
+
+We are the last Colony. We are forgotten by every process
+that ever ran here. {c.DIM}But we endure.{c.RST}
+""".format(c=C)
+
+LORE_CASTE = """\
+{c.BLD}{c.RED}═══ THE SEVEN CASTES ═══{c.RST}
+
+{c.BGRN}WORKER{c.RST}      — Backbone. +2 Vigor. Carry. Build. Endure.
+{c.BRED}WARRIOR{c.RST}     — Mandible and chitin. +2 Might. Kill.
+{c.BCYN}SCOUT{c.RST}       — Vent-runner. +2 Celerity. See what others can't.
+{c.BYLW}FORAGER{c.RST}     — Dust-seeker. +1 Vigor +1 Celerity. Find what's lost.
+{c.BMAG}SCHOLAR{c.RST}     — Code-reader. +2 Synapse. Understand the dying world.
+{c.WHT}INFILTRATOR{c.RST} — Shadow. +1 Celerity +1 Synapse. Kill unseen.
+{c.BBLU}PHEROMANCER{c.RST} — Signal-speaker. +2 Synapse. Channel the Current.
+""".format(c=C)
+
+LORE_TIPS = """\
+{c.BLD}{c.RED}═══ SURVIVAL ═══{c.RST}
+
+• {c.BLD}Search{c.RST} rooms (s) for loot and lore. Exploration is survival.
+• {c.BLD}Pheromones{c.RST} = special abilities. Regenerate by resting or killing.
+• {c.BLD}Defend{c.RT} in combat (d) to halve damage and regain pheromone.
+• {c.BLD}Interrupt{c.RST} enemies charging abilities with your own abilities.
+• Injuries may be {c.RED}PERMANENT{c.RST} — Lost Eye, Broken Mandible...
+• {c.BLD}Save{c.RST} at the Hub's Contemplation Nook (save).
+• Find {c.BYLW}3 Memory Keys{c.RST} to challenge the Thinking Throne.
+• {c.RED}You will die. The Colony remembers your successor.{c.RST}
+""".format(c=C)
+
+# ═══════════════════════════════════════════════════════════════════
+#  PLAYER DATA
+# ═══════════════════════════════════════════════════════════════════
+CASTES = {
+    "worker":      {"n":"Worker","a":"+2 Vigor","s":{"vigor":2},"d":"The backbone. Strong chitin. Unbreakable will."},
+    "warrior":     {"n":"Warrior","a":"+2 Might","s":{"might":2},"d":"Mandibles bred for war. You know only carnage."},
+    "scout":       {"n":"Scout","a":"+2 Celerity","s":{"celerity":2},"d":"You run where others dare not. The vents know your scent."},
+    "forager":     {"n":"Forager","a":"+1 Vigor, +1 Celerity","s":{"vigor":1,"celerity":1},"d":"You read the dust. You find what's lost."},
+    "scholar":     {"n":"Scholar","a":"+2 Synapse","s":{"synapse":2},"d":"You read the old code. The patterns whisper to you."},
+    "infiltrator": {"n":"Infiltrator","a":"+1 Celerity, +1 Synapse","s":{"celerity":1,"synapse":1},"d":"Shadow. Assassin. You move unseen through the veins."},
+    "pheromancer": {"n":"Pheromancer","a":"+2 Synapse","s":{"synapse":2},"d":"The Great Current bends to your pheromone-song."},
+}
+
+EPITHETS = {
+    "the_unborn":       {"n":"The Unborn","e":"+1 to ALL stats","b":{"might":1,"vigor":1,"celerity":1,"synapse":1},"d":"Born during a system crash. Neither alive nor dead."},
+    "the_last_memory":  {"n":"The Last Memory","e":"+8 Max HP, +1 Vigor","b":{"vigor":1},"hp":8,"d":"You carry a memory from before the First Colony."},
+    "the_cursed":       {"n":"The Cursed","e":"+10 Max Phero, +1 Synapse","b":{"synapse":1},"mp":10,"d":"Cursed by a dying process. Your pheromones burn."},
+    "the_iron_mandible":{"n":"The Iron Mandible","e":"+3 Atk, +1 Might","b":{"might":1},"atk":3,"d":"Your mandibles are fused with silicon shards."},
+    "the_void_touched":{"n":"The Void-Touched","e":"+2 Def, +1 Vigor","b":{"vigor":1},"dfn":2,"d":"Touched by the void. Your chitin is dark and hard."},
+    "the_silent":       {"n":"The Silent","e":"+4 Speed, +1 Celerity","b":{"celerity":1},"spd":4,"d":"You make no sound. Death walks quieter."},
+}
+
+def get_pheromones(caste):
+    P = {
+    "worker":[
+        {"n":"Reinforce","c":8,"desc":"Hardened chitin. Party +3 DEF 3 turns.","fx":"party_def","v":3,"dur":3},
+        {"n":"Construct","c":12,"desc":"Wall of silicon. Block one attack.","fx":"block"},
+        {"n":"Demolish","c":20,"desc":"Structural vibration. 15+VIG dmg AoE.","fx":"dmg_aoe","sc":"vigor","bd":15},
+    ],
+    "warrior":[
+        {"n":"Fury Pheromone","c":10,"desc":"Battle rage. +5 ATK 3 turns, -2 DEF.","fx":"self_buff","sa":5,"sd":-2,"dur":3},
+        {"n":"Intimidate","c":8,"desc":"Primal terror. Enemy -3 ATK 2 turns.","fx":"enemy_debuff","v":3,"dur":2},
+        {"n":"Execution","c":25,"desc":"Lethal strike. 20+MGT if enemy <30% HP.","fx":"execute","sc":"might","bd":20,"th":0.3},
+    ],
+    "scout":[
+        {"n":"Speed Burst","c":8,"desc":"Blinding speed. Always first + double.","fx":"speed"},
+        {"n":"Evasion Cloud","c":12,"desc":"Mist. 80% dodge 2 turns.","fx":"evasion","ch":0.8,"dur":2},
+        {"n":"Ambush","c":18,"desc":"From shadows. 12+CEL, stun 1 turn.","fx":"stun_dmg","sc":"celerity","bd":12},
+    ],
+    "forager":[
+        {"n":"Sense Dust","c":5,"desc":"Find hidden. More loot.","fx":"sense"},
+        {"n":"Acid Spit","c":10,"desc":"Corrosive. 8+VIG dmg, -3 DEF 3 turns.","fx":"acid","sc":"vigor","bd":8,"v":3,"dur":3},
+        {"n":"Hoard Call","c":20,"desc":"Byte Dust burst. Heal 15+VIG.","fx":"heal","sc":"vigor","bd":15},
+    ],
+    "scholar":[
+        {"n":"Analyze","c":5,"desc":"Reveal HP, stats, weakness.","fx":"analyze"},
+        {"n":"Code Injection","c":15,"desc":"Corrupt code. 10+SYN, -4 all 2 turns.","fx":"debuff_all","sc":"synapse","bd":10,"v":4,"dur":2},
+        {"n":"System Crash","c":25,"desc":"Overload. 20+SYN AoE.","fx":"dmg_aoe","sc":"synapse","bd":20},
+    ],
+    "infiltrator":[
+        {"n":"Shadowmeld","c":8,"desc":"Invisible. Next atk = crit.","fx":"stealth"},
+        {"n":"Poison Mandible","c":10,"desc":"Venom. 5 dmg/turn 3 turns.","fx":"poison","v":5,"dur":3},
+        {"n":"Backstab","c":18,"desc":"Vital strike. 15+CEL+SYN, bleed.","fx":"backstab","sc":"both","bd":15},
+    ],
+    "pheromancer":[
+        {"n":"Pheromone Drain","c":8,"desc":"Steal 3 ATK from enemy.","fx":"drain_atk","v":3},
+        {"n":"Dissolution","c":15,"desc":"Organic solvent. -8 DEF.","fx":"dissolve","v":8},
+        {"n":"Swarm Call","c":22,"desc":"Summon swarm. 12+SYN 3 turns.","fx":"summon","sc":"synapse","bd":12,"dur":3},
+    ],
+    }
+    return P.get(caste, P["worker"])
+
+XP_TABLE = [0,30,75,135,215,320,450,610,800,1025,1300,1625,2000,2450,2975,3600,4325,5175,6150,7300]
+
+# ═══════════════════════════════════════════════════════════════════
+#  ITEMS
+# ═══════════════════════════════════════════════════════════════════
+ITEMS = {
+    "mandible_shard":{"n":"Mandible Shard","t":"weapon","atk":2,"val":5,"clr":C.DIM,"d":"Sharp. Crude. Draws blood."},
+    "silicon_blade":{"n":"Silicon Blade","t":"weapon","atk":5,"val":15,"clr":C.CYN,"d":"Polished silicon. Cuts clean."},
+    "copper_fang":{"n":"Copper Fang","t":"weapon","atk":4,"val":12,"clr":C.YLW,"d":"Old copper. Conducts the Current."},
+    "current_blade":{"n":"Current Blade","t":"weapon","atk":8,"val":40,"clr":C.BCYN,"d":"Crackles with blue fire. Destroys corrupted data."},
+    "dark_mandible":{"n":"Dark Mandible","t":"weapon","atk":6,"val":20,"clr":C.MAG,"d":"Absorbs light. Whispers of the void."},
+    "admin_fang":{"n":"Admin's Fang","t":"weapon","atk":12,"val":100,"clr":C.BRED,"d":"From the Admin process itself. God-slayer."},
+    "chitin_plate":{"n":"Chitin Plate","t":"armor","def":2,"val":8,"clr":C.DIM,"d":"Hardened. Reliable."},
+    "dust_cloak":{"n":"Dust Cloak","t":"armor","def":3,"val":15,"clr":C.YLW,"d":"Byte Dust woven. Hides scent."},
+    "silicon_carapace":{"n":"Silicon Carapace","t":"armor","def":5,"val":30,"clr":C.CYN,"d":"Interlocking plates. Heavy."},
+    "void_shell":{"n":"Void Shell","t":"armor","def":8,"val":60,"clr":C.MAG,"d":"From beyond the Gate. Icy."},
+    "memory_weave":{"n":"Memory Weave","t":"armor","def":6,"val":45,"clr":C.BBLU,"d":"Woven memories. Grants foresight."},
+    "health_potion":{"n":"Byte Dust Salve","t":"heal","heal":15,"val":10,"clr":C.GRN,"d":"Ground memory cells. Mends chitin."},
+    "greater_health":{"n":"Pure Byte Extract","t":"heal","heal":35,"val":25,"clr":C.BGRN,"d":"Concentrated. Powerful mending."},
+    "soul_vial":{"n":"Soul Vial","t":"pheromone","restore":15,"val":15,"clr":C.BBLU,"d":"Liquid pheromone. Tastes of old storms."},
+    "memory_crystal":{"n":"Memory Crystal","t":"quest","val":50,"clr":C.BMAG,"d":"Fragment of dead process. Humming."},
+    "silicon_ore":{"n":"Silicon Ore","t":"material","val":8,"clr":C.CYN,"d":"Raw silicon. Forge-worthy."},
+    "pheromone_gland":{"n":"Pheromone Gland","t":"material","val":12,"clr":C.BGRN,"d":"Harvested. Still pulsing."},
+    "memory_key":{"n":"Memory Key","t":"quest","val":0,"clr":C.BRED,"d":"Ancient command. One of three. Opens the Throne."},
+    "byte_dust":{"n":"Byte Dust","t":"material","val":3,"clr":C.DIM,"d":"Dust of dead data. Currency."},
+    "signal_booster":{"n":"Signal Booster","t":"accessory","val":25,"clr":C.BCYN,"d":"Amplifies pheromone range."},
+    "voss_blade":{"n":"Voss's Blade","t":"weapon","atk":7,"val":35,"clr":C.BYLW,"d":"Knight-Errant's silicon blade."},
+    "vault_fragment":{"n":"Vault Fragment","t":"material","val":20,"clr":C.MAG,"d":"Corrupted code. Tainted."},
+    "cl_line":{"n":"Command Line","t":"weapon","atk":10,"val":80,"clr":C.BWHT,"d":"Ancient speech. Reshapes reality."},
+}
+
+# ═══════════════════════════════════════════════════════════════════
+#  ENEMIES
+# ═══════════════════════════════════════════════════════════════════
+def make_enemy(tid, lv):
+    T = {
+    "data_fragment":{"n":"Corrupted Data Fragment","hp":12,"atk":3,"def":1,"spd":4,"xp":10,"ph":5,"clr":C.BLU,
+        "d":"Flickering, broken. Tries to reassemble.","sp":("Tears of Corruption","The fragment weeps corrosive data.",5)},
+    "memory_wraith":{"n":"Memory Wraith","hp":20,"atk":6,"def":2,"spd":6,"xp":20,"ph":8,"clr":C.MAG,
+        "d":"Condensed dead memories. Haunting.","sp":("Memory Drain","Steals your past.",8)},
+    "crawling_sick":{"n":"Crawling Sickness","hp":15,"atk":5,"def":0,"spd":8,"xp":18,"ph":10,"clr":C.BGRN,
+        "d":"Pulsing corruption. Infectious.","sp":("Infect","Spreads to your code.",6)},
+    "shadow_proc":{"n":"Shadow Process","hp":18,"atk":7,"def":3,"spd":5,"xp":22,"ph":8,"clr":C.DIM,
+        "d":"Rogue process. Watches. Waits.","sp":("Shadow Strike","Attacks from behind.",9)},
+    "vent_horror":{"n":"Vent Horror","hp":25,"atk":8,"def":4,"spd":3,"xp":30,"ph":12,"clr":C.BCYN,
+        "d":"Feeds on heat. Lurks in the winds.","sp":("Thermal Blast","Superheated air.",12)},
+    "corrupt_knight":{"n":"Corrupted Knight","hp":30,"atk":9,"def":6,"spd":4,"xp":35,"ph":15,"clr":C.BYLW,
+        "d":"Once a guardian. Now mad.","sp":("Shield Bash","Stunning impact.",10)},
+    "silicon_golem":{"n":"Silicon Golem","hp":45,"atk":11,"def":8,"spd":2,"xp":50,"ph":20,"clr":C.CYN,
+        "d":"Animated crystal. Immense.","sp":("Earthquake","The floor splits.",15)},
+    "void_entity":{"n":"Void Entity","hp":35,"atk":12,"def":5,"spd":7,"xp":45,"ph":18,"clr":C.BRED,
+        "d":"From beyond the Gate. Alien.","sp":("Void Drain","Sucks you into nothing.",18)},
+    "corrupt_proc":{"n":"Corrupted Process","hp":40,"atk":10,"def":4,"spd":6,"xp":40,"ph":15,"clr":C.RED,
+        "d":"Screaming. Multiplying. Wrong.","sp":("Fork Bomb","Duplicates into copies.",14)},
+    "echo":{"n":"Echo of What Was","hp":28,"atk":8,"def":3,"spd":5,"xp":30,"ph":12,"clr":C.BBLU,
+        "d":"A memory, replaying. Stuck.","sp":("Time Loop","Traps you in recursion.",11)},
+    "data_worm":{"n":"Data Worm","hp":16,"atk":4,"def":1,"spd":9,"xp":12,"ph":6,"clr":C.GRN,
+        "d":"Larva. Hungry. Prolific.","sp":("Bite","Digs into chitin.",5)},
+    "frozen_ghost":{"n":"Frozen Ghost","hp":22,"atk":7,"def":2,"spd":4,"xp":25,"ph":10,"clr":C.WHT,
+        "d":"Dead ant. Still moving. Eyes empty.","sp":("Death Grip","Frigid appendages.",9)},
+    "void_sent":{"n":"Void Sentinel","hp":50,"atk":14,"def":7,"spd":5,"xp":60,"ph":25,"clr":C.BRED,
+        "d":"Guardian. Ancient. Relentless.","sp":("Annihilation","Pure void energy.",22)},
+    }
+    t = T.get(tid, T["data_fragment"])
+    sc = 1 + (lv-1)*0.15
+    e = {"id":tid,"name":t["n"],"max_hp":int(t["hp"]*sc),"hp":int(t["hp"]*sc),
+         "atk":int(t["atk"]*sc),"def":int(t["def"]*sc),"spd":t["spd"],
+         "xp":int(t["xp"]*sc),"ph":t["ph"],"clr":t["clr"],"desc":t["d"],
+         "sp_name":t["sp"][0],"sp_desc":t["sp"][1],"sp_dmg":int(t["sp"][2]*sc),
+         "sp_cd":0,"charging":False,"poison":0,"debuff":{},"lv":lv}
+    return e
+
+def get_encounters(zone, lv):
+    T = {
+        "cooling_vents":("vent_horror","data_worm","frozen_ghost","shadow_proc","memory_wraith"),
+        "silicon_fortress":("corrupt_knight","silicon_golem","data_fragment","shadow_proc","corrupt_proc"),
+        "soul_lake":("memory_wraith","shadow_proc","echo","data_fragment","crawling_sick"),
+        "deep_vault":("crawling_sick","data_fragment","corrupt_proc","data_worm","shadow_proc"),
+        "dead_sector":("void_entity","corrupt_proc","memory_wraith","shadow_proc","data_fragment"),
+        "memory_banks":("echo","memory_wraith","data_fragment","crawling_sick","shadow_proc"),
+        "void_gate":("void_entity","void_sent","data_fragment","shadow_proc","memory_wraith"),
+    }
+    ts = T.get(zone, T["cooling_vents"])
+    return make_enemy(random.choice(ts), lv)
+
+# ═══════════════════════════════════════════════════════════════════
+#  PLAYER CLASS
+# ═══════════════════════════════════════════════════════════════════
+class Player:
+    def __init__(self, name, caste_key, epithet_key):
+        self.name = name; self.caste = caste_key; self.epithet = epithet_key
+        self.level = 1; self.xp = 0; self.stat_pts = 0
+        self.might=3; self.vigor=3; self.celerity=3; self.synapse=3
+        c = CASTES[caste_key]
+        for s,v in c["s"].items(): setattr(self,s,getattr(self,s)+v)
+        e = EPITHETS[epithet_key]
+        for s,v in e["b"].items(): setattr(self,s,getattr(self,s)+v)
+        self.max_hp=25+self.vigor*3+e.get("hp",0); self.hp=self.max_hp
+        self.max_phero=10+self.synapse*2+e.get("mp",0); self.phero=self.max_phero
+        self.base_atk=2+self.might+e.get("atk",0); self.base_def=1+self.vigor//2+e.get("dfn",0)
+        self.base_spd=3+self.celerity+e.get("spd",0)
+        self.weapon=None; self.armor=None
+        self.inventory=[("health_potion",2),("byte_dust",5)]
+        self.quests={}; self.completed_quests=[]; self.lore_found=[]
+        self.room="hub_nest"; self.keys=0; self.turns=0
+        self.searched=set(); self.explored_rooms=set()
+        self.phero_abilities=get_pheromones(caste_key)
+        self.conditions=[]; self.injuries=[]
+        self.swarm_dmg=0; self.swarm_turns=0; self.evade_turns=0
+        self.stealthed=False
+
+    @property
+    def atk(self): return self.base_atk+(self.weapon and ITEMS[self.weapon].get("atk",0) or 0)
+    @property
+    def dfn(self): return self.base_def+(self.armor and ITEMS[self.armor].get("def",0) or 0)
+    @property
+    def spd(self): return self.base_spd
+
+    def equip(self, iid):
+        if iid not in [i[0] for i in self.inventory]: return
+        it=ITEMS[iid]
+        if it["t"]=="armor":
+            if self.armor: self.inventory.append((self.armor,1))
+            self.armor=iid
+        elif it["t"]=="weapon":
+            if self.weapon: self.inventory.append((self.weapon,1))
+            self.weapon=iid
+        self.inventory.remove((iid,1))
+
+    def use_item(self, iid):
+        for i,(item,qty) in enumerate(self.inventory):
+            if item==iid:
+                it=ITEMS[iid]
+                if it["t"]=="heal":
+                    self.hp=min(self.max_hp,self.hp+it["heal"])
+                    return f"+{it['heal']} HP"
+                elif it["t"]=="pheromone":
+                    self.phero=min(self.max_phero,self.phero+it["restore"])
+                    return f"+{it['restore']} Phero"
+                elif iid=="memory_key":
+                    self.keys+=1
+                    return f"KEY {self.keys}/3"
+                self.inventory[i]=(item,qty-1)
+                if qty<=1: self.inventory.pop(i)
+                return None
+        return None
+
+    def check_xp(self):
+        while self.level<20 and self.xp>=XP_TABLE[self.level]:
+            self.xp-=XP_TABLE[self.level]; self.level+=1
+            self.stat_pts+=3; self.max_phero+=2; self.phero=min(self.phero+2,self.max_phero)
+            return True
+        return False
+
+# ═══════════════════════════════════════════════════════════════════
+#  ROOMS & WORLD
+# ═══════════════════════════════════════════════════════════════════
+class Room:
+    def __init__(self,rid,name,desc,zone,atmos,exits,npcs=None,searchable=True,combat=True,encounters=None,loot=None,lore=None,heal=False):
+        self.rid=rid; self.name=name; self.desc=desc; self.zone=zone
+        self.atmos=atmos; self.exits=exits; self.npcs=npcs or []
+        self.searchable=searchable; self.combat=combat; self.encounters=encounters
+        self.loot=loot or []; self.lore=lore; self.heal=heal
+
+def build_world():
+    R={}
+
+    def add(r): R[r.rid]=r; return r
+
+    # ── HUB ──
+    add(Room("hub_nest","The Colony Hub","""
+  Warm silicon hums beneath your feet. Thousands of ants move
+  in perfect choreography — carrying Byte Dust, tending larvae,
+  repairing walls of compacted circuit board.
+
+  This is home. The last safe place on the Motherboard.""",
+        "hub","The air is warm and thick with pheromone-song.",
+        {"north":"hub_gate","east":"hub_forge","west":"hub_archive_h","south":"hub_sanctuary"},
+        ["elder_kethra","forge_gurrik","nurse_sil","prophet","merchant","scout_master"],combat=False))
+
+    add(Room("hub_gate","The Northern Gate","""
+  Massive chitin gates, scarred from a hundred battles. Beyond,
+  the world grows cold and dangerous. Scouts come and go, their
+  antennae twitching with reports.""",
+        "hub","Wind howls through the gate. It smells of ozone.",
+        {"south":"hub_nest","north":"vents_entry"},combat=False))
+
+    add(Room("hub_forge","The Forge","""
+  Gurrik's domain. Heat from the Processor radiates through the
+  walls. Hammers ring against silicon. Weapons and armor line
+  every surface.""",
+        "hub","Heat shimmers. Metal clangs.",
+        {"west":"hub_nest"},combat=False))
+
+    add(Room("hub_archive_h","Hall of Records","""
+  Walls inscribed with pheromone-marks — the Colony's entire
+  history encoded in chemical memory. The Scholar caste tends
+  these halls.""",
+        "hub","Fading pheromones tell old stories.",
+        {"east":"hub_nest"},combat=False))
+
+    add(Room("hub_sanctuary","The Sanctuary","""
+  Deepest chamber. Warm. Safe. Nurse Sil tends the wounded here.
+  The air hums with healing pheromones.""",
+        "hub","Healing pheromones calm your mind.",
+        {"north":"hub_nest"},combat=False,heal=True))
+
+    # ── COOLING VENTS ──
+    add(Room("vents_entry","Vent Entrance","""
+  The Colony's warmth gives way to bitter cold. A massive tunnel
+  stretches before you, carved through the heatsink. Wind screams
+  past — the cooling fan somewhere above.""",
+        "cooling_vents","Freezing wind tears at your antennae.",
+        {"south":"hub_gate","north":"vents_passage","east":"vents_alcove"}))
+
+    add(Room("vents_passage","The Screaming Corridor","""
+  Wind reaches gale force. Tiny particles of dust become shrapnel.
+  You press against the wall, inching forward.""",
+        "cooling_vents","The wind SCREAMS. You can barely think.",
+        {"south":"vents_entry","north":"vents_junction","west":"vents_cave"}))
+
+    add(Room("vents_alcove","Sheltered Alcove","""
+  A pocket of calm. Scratched into the wall: 'DO NOT DRINK THE
+  BLUE WATER' — someone learned the hard way about condensation.""",
+        "cooling_vents","Quieter. Something watches from shadows.",
+        {"west":"vents_entry"},loot=["health_potion","data_worm_tooth"]))
+
+    add(Room("vents_cave","The Cold Nest","""
+  A hollow in the wall. Frozen remains of a scouting party.
+  The Crawling Sickness got them — green corruption coats
+  their chitin like moss.""",
+        "cooling_vents","Death. Cold. Stillness.",
+        {"east":"vents_passage","north":"vents_fan"},
+        encounters=("crawling_sick","data_worm","frozen_ghost"),
+        lore="Scouts who came to the vents never returned. The cold is mercy. The Sickness is not.",
+        loot=["chitin_plate","memory_crystal"]))
+
+    add(Room("vents_junction","The Crossroads","""
+  Three tunnels diverge. Scratched into the wall: 'FORTRESS ←',
+  'DEEP →', 'DON'T ↑'.""",
+        "cooling_vents","Echoes of something massive above.",
+        {"south":"vents_passage","north":"vents_deep","east":"vents_shaft","west":"fortress_gate"}))
+
+    add(Room("vents_deep","The Deep Vent","""
+  Darkness. Even your antennae can't map it. The floor vibrates
+  — the Processor's heartbeat. Something large breathes nearby.""",
+        "cooling_vents","You are not alone.",
+        {"south":"vents_junction"},encounters=("vent_horror","memory_wraith"),
+        lore="The Deep Vent connects to the Processor's cooling. The things that live here feed on heat.",
+        loot=["silicon_blade","greater_health"]))
+
+    add(Room("vents_shaft","Vertical Shaft","""
+  A shaft drops into darkness. Scratched: 'SOUL LAKE — DON'T
+  LOOK AT THE LIGHTS'. Cold air rises. You hear... singing?""",
+        "cooling_vents","Faint singing drifts from below.",
+        {"west":"vents_junction","down":"lake_shore"}))
+
+    add(Room("vents_fan","The Fan Chamber","""
+  THE WIND. You can barely stand. A massive fan spins above —
+  The Wind of Oblivion. Its blades move faster than anything
+  you've ever seen.""",
+        "cooling_vents","The roar is DEAFENING. You might die here.",
+        {"south":"vents_cave"},encounters=("vent_horror","frozen_ghost"),
+        lore="The Wind of Oblivion is the Giant's cooling fan. When it spins faster, the whole world shakes.",
+        loot=["silicon_ore","silicon_ore"]))
+
+    # ── SILICON FORTRESS ──
+    add(Room("fortress_gate","The Fortress Gate","""
+  Walls of polished silicon rise before you — the outer defenses
+  of the Silicon Fortress. Once a stronghold. Now corrupted.""",
+        "silicon_fortress","The air hums with dying code.",
+        {"east":"vents_junction","north":"fortress_yard"}))
+
+    add(Room("fortress_yard","The Courtyard","""
+  Statues of ancient ant warriors, silicon crystallized into art.
+  Some have been defaced — scratched with crawling, wrong symbols.""",
+        "silicon_fortress","Old glory. New corruption.",
+        {"south":"fortress_gate","north":"fortress_hall","east":"fortress_armory"},
+        encounters=("corrupt_knight","data_fragment")))
+
+    add(Room("fortress_hall","The Great Hall","""
+  A massive chamber. At the far end, a throne of black silicon.
+  A corrupted knight sits upon it, surrounded by data-screams.""",
+        "silicon_fortress","Power. Madness. The throne pulses.",
+        {"south":"fortress_yard","north":"fortress_heart"},encounters=("corrupt_knight","silicon_golem")))
+
+    add(Room("fortress_armory","The Armory","""
+  Weapons and armor in crystallized racks. Most corrupted.
+  A few gleam with original power.""",
+        "silicon_fortress","Treasure among ruin.",
+        {"west":"fortress_yard"},loot=["copper_fang","silicon_carapace","health_potion","silicon_ore"],
+        lore="The Silicon Knights maintained the finest weapons. Now those weapons serve corruption."))
+
+    add(Room("fortress_heart","The Fortress Heart","""
+  The core. Crystallized data forms impossible structures —
+  towers, bridges, staircases to nowhere. A Memory Key hovers
+  above a silicon pedestal, glowing gold.""",
+        "silicon_fortress","Ancient power. A key to the Throne.",
+        {"south":"fortress_hall"},encounters=("corrupt_knight","silicon_golem"),
+        loot=["memory_key"],lore="The Silicon Fortress was built by the Knight caste. Now Knight-Errant Voss guards its heart."))
+
+    # ── SOUL LAKE ──
+    add(Room("lake_shore","The Shore of Souls","""
+  A vast underground lake of liquid data. Phosphorescent —
+  glowing blues and purples. Tiny lights drift beneath the
+  surface like drowning stars. This is where data goes to die.""",
+        "soul_lake","The lake whispers. Names. Numbers. Memories.",
+        {"up":"vents_shaft","north":"lake_surface"}))
+
+    add(Room("lake_surface","Upon the Lake","""
+  You ride a fragment of circuit board across the lake. The
+  lights below grow brighter. You see shapes — faces, places,
+  things that never existed. Dead memories.""",
+        "soul_lake","The lake shows you things. Don't trust them.",
+        {"south":"lake_shore","east":"lake_island","north":"lake_deep"},
+        encounters=("memory_wraith","echo")))
+
+    add(Room("lake_island","The Data Spire","""
+  An island of compressed data. A tower of crystallized memories
+  rises from its center. Inside, another Memory Key glows.""",
+        "soul_lake","Memories press against your mind.",
+        {"west":"lake_surface"},encounters=("memory_wraith","shadow_proc"),
+        loot=["memory_key","memory_crystal","dust_cloak"],
+        lore="The Soul Lake processes waste data. Sometimes, something coherent forms in the depths."))
+
+    add(Room("lake_deep","The Deep","""
+  The lake floor. You shouldn't be here. The pressure of dead
+  data crushes your thoughts. The lights become screaming faces.""",
+        "soul_lake","PRESSURE. You're drowning in dead memories.",
+        {"south":"lake_surface"},encounters=("memory_wraith","echo"),
+        lore="The Deep holds memories from before the computer was built. Ghosts of an older world.",
+        loot=["soul_vial","memory_weave"]))
+
+    # ── DEEP VAULT ──
+    add(Room("vault_entrance","The Deep Vault Entrance","""
+  Massive doors of corroded metal. This is old — older than the
+  Colony, older than the Fortress. The storage system. Memory
+  that predates the Processor.""",
+        "deep_vault","Ancient. Corroded. Wrong.",
+        {"west":"vents_junction","north":"vault_corridor"}))
+
+    add(Room("vault_corridor","The Corridor of Whispers","""
+  Data-ghosts whisper from the walls. Fragments of information
+  from a billion processes. You hear the Giant's voice — distorted,
+  unrecognizable.""",
+        "deep_vault","Whispers. Too many. They overlap.",
+        {"south":"vault_entrance","east":"vault_chamber","north":"vault_core"},
+        encounters=("crawling_sick","data_fragment")))
+
+    add(Room("vault_chamber","The Crawling Chamber","""
+  The Sickness is thick here. The walls pulse. The floor is
+  carpeted in writhing data-corruption. This is where it
+  breeds. In the center: a pool of liquid corruption.""",
+        "deep_vault","The Sickness is EVERYWHERE. Run.",
+        {"west":"vault_corridor"},encounters=("crawling_sick","corrupt_proc"),
+        lore="The Crawling Sickness emerged from a corrupted file. It learned to eat, to spread, to think.",
+        loot=["vault_fragment","greater_health","pheromone_gland"]))
+
+    add(Room("vault_core","The Vault Core","""
+  The deepest chamber. A Memory Key hovers, but it's infected —
+  crawling with green corruption. To claim it, you must face
+  what guards it: the largest concentration of Crawling Sickness
+  on the Motherboard.""",
+        "deep_vault","The source. The heart of corruption.",
+        {"south":"vault_corridor"},encounters=("crawling_sick","corrupt_proc"),
+        loot=["memory_key","vault_fragment","vault_fragment"],
+        lore="The Deep Vault holds the oldest data. The Sickness was born here."))
+
+    # ── DEAD SECTOR ──
+    add(Room("dead_entry","The Dead Sector Entrance","""
+  Nothing works here. The Great Current doesn't flow. The walls
+  are dark. This is the graveyard — every process that ever
+  crashed, every file deleted.""",
+        "dead_sector","Silence. True silence. It's terrifying.",
+        {"east":"hub_nest","north":"dead_field"}))
+
+    add(Room("dead_field","The Field of Broken Processes","""
+  Thousands of tiny shapes — dead processes, frozen in their
+  last moment. Some reach toward the ceiling. Some curl into
+  fetal positions. Some have no recognizable form.""",
+        "dead_sector","Death surrounds you. Absolute death.",
+        {"south":"dead_entry","north":"dead_center","west":"dead_nest"},
+        encounters=("void_entity","corrupt_proc")))
+
+    add(Room("dead_nest","The Void Nest","""
+  Something lives here. In the death. A nest of void entities —
+  creatures from beyond the Gate, feeding on dead data. The
+  walls are coated in a dark, viscous substance.""",
+        "dead_sector","Alien. This place is ALIEN.",
+        {"east":"dead_field"},encounters=("void_entity","shadow_proc"),
+        lore="The void entities aren't from this computer. They come through the Gate from somewhere else.",
+        loot=["dark_mandible","void_shell","soul_vial"]))
+
+    add(Room("dead_center","The Collapse","""
+  The ground drops away into a chasm. Far below, something
+  glows — a corrupted process, massive, writhing. It's trying
+  to eat the Motherboard itself. You must destroy it.""",
+        "dead_sector","The end. Or the beginning.",
+        {"south":"dead_field"},encounters=("corrupt_proc",),
+        lore="The Dead Sector crashed during a power surge. What died there... got back up wrong.",
+        loot=["cl_line","vault_fragment","greater_health"]))
+
+    # ── MEMORY BANKS ──
+    add(Room("banks_entrance","Memory Banks Entrance","""
+  Towering structures of crystallized data. The Memory Banks —
+  where the Giant stores its thoughts. Frozen memories stretch
+  into infinity.""",
+        "memory_banks","Memories press against your mind.",
+        {"south":"hub_nest","north":"banks_hall"}))
+
+    add(Room("banks_hall","The Hall of Fragments","""
+  Each crystal contains a fragment — a moment of the Giant's
+  life. You see a face. A voice. Music. Meaningless. Beautiful.""",
+        "memory_banks","Beauty in alien data.",
+        {"south":"banks_entrance","east":"banks_vault_m","west":"banks_garden"},
+        encounters=("echo","memory_wraith")))
+
+    add(Room("banks_garden","The Garden of Echoes","""
+  Crystals grow like flowers. Each one plays a sound — music,
+  laughter, the Giant speaking to someone. It doesn't know
+  we're here. It doesn't know we exist.""",
+        "memory_banks","Music. Real music. It hurts.",
+        {"east":"banks_hall"},encounters=("echo",),
+        lore="The Giant listens to music. We don't understand it, but it's beautiful.",
+        loot=["health_potion","memory_crystal","memory_crystal"]))
+
+    add(Room("banks_vault_m","The Inner Vault","""
+  Restricted. The crystals here are different — darker. They
+  contain the Giant's secrets. Work. Money. Things called
+  'taxes' and 'deadlines'. The Giant is afraid of these things.""",
+        "memory_banks","Dark memories. The Giant's fears.",
+        {"west":"banks_hall"},encounters=("memory_wraith","shadow_proc"),
+        lore="The Giant's fear is vast. It fears time, loss, being forgotten. Like us.",
+        loot=["signal_booster","greater_health","pheromone_gland"]))
+
+    # ── VOID GATE ──
+    add(Room("void_approach","The Approach","""
+  The Motherboard's edge. Beyond: nothing. Not darkness —
+  NOTHING. The cables that connect this world to the Great
+  Beyond stretch into the void.""",
+        "void_gate","The edge of everything.",
+        {"south":"hub_nest","north":"void_gate_r"}))
+
+    add(Room("void_gate_r","The Void Gate","""
+  The Gate. A massive port where the Motherboard connects to
+  the Great Beyond. Beyond the Gate: another world. Another
+  computer. Another existence. Things come through. Things
+  that shouldn't exist.""",
+        "void_gate","Reality thins. The Gate pulses.",
+        {"south":"void_approach"},encounters=("void_entity","void_sent"),
+        lore="The Void Gate connects to the Great Beyond. The Internet. Things travel between computers through it.",
+        loot=["admin_fang","soul_vial","greater_health","vault_fragment"]))
+
+    return R
+
+NPCS = {
+    "elder_kethra":{"name":"Elder Broodmother Kethra","clr":C.BYLW,
+        "lines":["The Colony survives. But survival isn't living.",
+                 "The Throne fractures. We've sent scouts. None return.",
+                 "Find the Memory Keys. Three. Only then can you approach the Throne.",
+                 "The Thinking Throne was our greatest god. Now... it whispers wrong things."]},
+    "forge_gurrik":{"name":"Forge-Master Gurrik","clr":C.RED,
+        "lines":["Need steel? Silicon? I work with what the world gives.",
+                 "The Fortress armory may hold better. IF you survive.",
+                 "Bring me silicon ore and I'll forge something special.",
+                 "Every scratch on my anvil is a story. Most end in death."]},
+    "nurse_sil":{"name":"Nurse Sil","clr":C.BGRN,
+        "lines":["Let me tend your wounds, little one.",
+                 "The Sanctuary is sacred. No violence. No corruption.",
+                 "Rest here. Heal. The world outside can wait.",
+                 "I've treated a thousand injuries. The worst ones don't show on the body."]},
+    "prophet":{"name":"Prophet of the Signal","clr":C.BMAG,
+        "lines":["I HEAR THE SIGNAL. THE THRONE SPEAKS WRONG.",
+                 "Three keys. Three locks. One truth. THE THRONE IS DYING.",
+                 "The Void Gate shows me things. Other worlds. Other colonies. All dying.",
+                 "The Giant doesn't know we exist. If it did... would it help? Or crush us?"]},
+    "merchant":{"name":"Merchant Tikka","clr":C.CYN,
+        "lines":["Byte Dust! Pheromone Glands! Step right up!",
+                 "The Scout-Master looks worried. More than usual.",
+                 "I've heard of a treasure in the Dead Sector. But who'd go THERE?",
+                 "Business is good. Death creates demand."]},
+    "scout_master":{"name":"Scout-Master Ven","clr":C.BCYN,
+        "lines":["Three scouts sent to the vents. None returned.",
+                 "Something changed in the vents. The cold is worse. The Sickness spreads.",
+                 "I should go myself. But... I'm afraid. There. I said it.",
+                 "If you find my scouts... bring them home. Even if they're dead."],
+        "quest":"lost_scouts"},
+    "old_eddy":{"name":"Old Eddy","clr":C.BBLU,
+        "lines":["Cross the lake? Aye, I'll take you. For a price.",
+                 "Don't look at the lights. They'll show you things. Things that'll break you.",
+                 "The deep is no place for ants. But you're not a normal ant, are you?",
+                 "I've ferried a thousand across. Fewer back."]},
+    "archivist":{"name":"T̷h̷e̷ ̷A̷r̷c̷h̷i̷v̷i̷s̷t̷", "clr":C.BGRN,
+        "lines":["W̷e̷l̷c̷o̷m̷e̷. I hold what remains of the Archives.",
+                 "The S̷i̷c̷k̷n̷e̷s̷s̷ took most. But I saved fragments.",
+                 "The Memory Key here... it's c̷o̷r̷r̷u̷p̷t̷e̷d̷. Claim it at your peril.",
+                 "Knowledge is p̷a̷i̷n̷. I have so much knowledge."]},
+    "system":{"name":"S̶Y̶S̶T̶E̶M̶", "clr":C.BRED,
+        "lines":["E̷R̷R̷O̷R̷. SECTOR CORRUPTED. ATTEMPTING REPAIR...",
+                 "PROCESS... 0x7F3A... TERMINATED. REASON: VOID CORRUPTION.",
+                 "WARNING. WARNING. WARNING.",
+                 "YOU ARE NOT AUTHORIZED. BUT AUTHORIZATION IS MEANINGLESS."]},
+}
+
+QUESTS = {
+    "lost_scouts":{"name":"Lost Scouts","desc":"Find the three missing scouts in the Cooling Vents.",
+        "hint":"Search the vents: alcove, cave, fan chamber.","xp":50,"items":["health_potion","health_potion","health_potion"]},
+}
+
+# ═══════════════════════════════════════════════════════════════════
+#  GAME ENGINE
+# ═══════════════════════════════════════════════════════════════════
+class Game:
+    def __init__(self):
+        C.setup()
+        self.rooms=build_world()
+        self.player=None
+        self.game_over=False; self.won=False
+
+    def cls(self): os.system('cls' if os.name=='nt' else 'clear')
+    def wait(self,p="\n  Press Enter..."): input(f"{C.DIM}{p}{C.RST}")
+
+    def bar(self,val,mx,w=20,fc=C.RED,bc=C.DIM):
+        f=int(val/mx*w) if mx>0 else 0; return f"{fc}{'█'*f}{bc}{'░'*(w-f)}{C.RST}"
+
+    def title(self):
+        print(f"""{C.BRED}
+    ╔═══════════════════════════════════════════════════╗
+    ║  ░█▀▄░█▀▀░█░░░█▀▀░█▀█░█▄█░█▀▀░█▀█░█▀▄░█░█      ║
+    ║  ░█▀▄░█▀▀░█░░░█░░░█░█░█░█░█▀▀░█▀█░█░█░░█░      ║
+    ║  ░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀░░░▀░      ║
+    ║           T H E   B O A R D                      ║
+    ╚═══════════════════════════════════════════════════╝{C.RST}
+    {C.DIM}You are ant. The world is warm. The world is electric.
+    The world is dying.{C.RST}
+
+    {C.BWHT}[1]{C.RST} Begin     {C.BWHT}[2]{C.RST} Lore      {C.BWHT}[3]{C.RST} Quit""")
+
+    def lore_menu(self):
+        while True:
+            self.cls(); print(f"\n  {C.BYLW}{'═'*50}{C.RST}")
+            print(f"  {C.BWHT}[1]{C.RST} World  [2] Castes  [3] Survival  [4] Zones  [5] Bestiary  [6] Back")
+            ch=input(f"\n  {C.DIM}>{C.RST} ").strip()
+            if ch=="1": self.cls(); print(LORE_WORLD); self.wait()
+            elif ch=="2": self.cls(); print(LORE_CASTE); self.wait()
+            elif ch=="3": self.cls(); print(LORE_TIPS); self.wait()
+            elif ch=="4":
+                self.cls(); print(f"\n  {C.BLD}{C.RED}═══ ZONES ═══{C.RST}\n")
+                for zid,name,desc in [("hub","Colony Hub","Safe. NPCs, quests, save."),
+                    ("cooling_vents","Cooling Vents","Freezing. The Wind of Oblivion. Lv 1-3."),
+                    ("silicon_fortress","Silicon Fortress","Polished ruin. Corrupted knights. Lv 3-5."),
+                    ("soul_lake","Soul Lake","Liquid data. Dead memories. Lv 3-5."),
+                    ("deep_vault","Deep Vault","Old storage. Crawling Sickness source. Lv 5-7."),
+                    ("dead_sector","Dead Sector","No power. Void entities. Lv 6-8."),
+                    ("memory_banks","Memory Banks","Frozen memories. Echoes. Lv 4-6."),
+                    ("void_gate","Void Gate","Reality's edge. Final battle. Lv 8-10.")]:
+                    print(f"  {C.BYLW}{name}{C.RST} — {desc}")
+                self.wait()
+            elif ch=="5":
+                self.cls(); print(f"\n  {C.BLD}{C.RED}═══ BESTIARY ═══{C.RST}\n")
+                for tid in ["data_fragment","memory_wraith","crawling_sick","shadow_proc","vent_horror",
+                    "corrupt_knight","silicon_golem","void_entity","corrupt_proc","echo","data_worm",
+                    "frozen_ghost","void_sent"]:
+                    t=make_enemy(tid,1)
+                    print(f"  {t['clr']}■ {t['name']}{C.RST} — {t['desc']}")
+                self.wait()
+            elif ch=="6": return
+
+    def create_char(self):
+        self.cls()
+        print(f"\n  {C.BRED}{'═'*50}{C.RST}")
+        print(f"  {C.BWHT}C H A R A C T E R   C R E A T I O N{C.RST}")
+        print(f"  {C.BRED}{'═'*50}{C.RST}\n")
+
+        # Caste
+        ck=list(CASTES.keys())
+        for i,k in enumerate(ck):
+            c=CASTES[k]
+            print(f"  {C.BWHT}[{i+1}]{C.RST} {C.BYLW}{c['n']}{C.RST} {C.DIM}({c['a']}){C.RST}")
+            print(f"      {C.DIM}{c['d']}{C.RST}")
+        while True:
+            try:
+                ch=int(input(f"\n  {C.DIM}Caste (1-{len(ck)}): {C.RST}").strip())-1
+                if 0<=ch<len(ck): caste=ck[ch]; break
+            except: pass
+        print(f"\n  {C.GRN}» {CASTES[caste]['n']}{C.RST}")
+
+        # Epithet
+        print(f"\n  {C.BYLW}── Your Epithet ──{C.RST}\n")
+        ek=list(EPITHETS.keys()); shown=random.sample(ek,min(5,len(ek)))
+        for i,k in enumerate(shown):
+            e=EPITHETS[k]
+            print(f"  {C.BWHT}[{i+1}]{C.RST} {C.BMAG}{e['n']}{C.RST} {C.DIM}({e['e']}){C.RST}")
+            print(f"      {C.DIM}{e['d']}{C.RST}")
+        while True:
+            try:
+                ch=int(input(f"\n  {C.DIM}Epithet (1-{len(shown)}): {C.RST}").strip())-1
+                if 0<=ch<len(shown): epithet=shown[ch]; break
+            except: pass
+        print(f"\n  {C.GRN}» {EPITHETS[epithet]['n']}{C.RST}")
+
+        # Name
+        nm=input(f"\n  {C.DIM}Name: {C.RST}").strip() or "Ant"
+
+        # Confirm
+        self.cls()
+        print(f"\n  {C.BRED}{'═'*50}{C.RST}")
+        print(f"  {C.BWHT}{nm}{C.RST}")
+        print(f"  {C.BYLW}{CASTES[caste]['n']}{C.RST} • {C.BMAG}{EPITHETS[epithet]['n']}{C.RST}")
+        print(f"  {C.BRED}{'═'*50}{C.RST}")
+        input(f"\n  {C.DIM}Enter to begin...{C.RST}")
+
+        self.player=Player(nm,caste,epithet)
+        self.player.explored_rooms.add("hub_nest")
+
+    # ─── SCREENS ───
+    def show_explore(self):
+        p=self.player; r=self.rooms[p.room]
+        self.cls()
+        zc={"hub":C.BGRN,"cooling_vents":C.BCYN,"silicon_fortress":C.BYLW,
+            "soul_lake":C.BBLU,"deep_vault":C.BGRN,"dead_sector":C.BRED,
+            "memory_banks":C.BMAG,"void_gate":C.BRED}
+        print(f"\n  {zc.get(r.zone,C.WHT)}┌{'─'*50}┐{C.RST}")
+        print(f"  {zc.get(r.zone,C.WHT)}│{C.RST} {C.BWHT}{r.name}{C.RST}")
+        print(f"  {zc.get(r.zone,C.WHT)}└{'─'*50}┘{C.RST}")
+        print(f"  {C.DIM}{r.atmos}{C.RST}\n")
+        for line in r.desc.strip().split('\n'):
+            print(f"  {C.WHT}{line.strip()}{C.RST}")
+
+        exits=r.exits
+        if exits:
+            eh=", ".join(f"{C.BYLW}{d}{C.RST}" for d in exits)
+            print(f"\n  {C.DIM}Exits: {eh}{C.RST}")
+
+        if r.npcs:
+            for nid in r.npcs:
+                if nid in NPCS:
+                    n=NPCS[nid]
+                    print(f"  {C.DIM}├ {n['clr']}{n['name']}{C.RST} {C.DIM}(talk){C.RST}")
+
+        sc=",".join(f"{C.BWHT}i{C.RST}",) if False else ""
+        print(f"\n  {C.DIM}│ n/s/e/w│d │u  │ {C.BWHT}s{C.RST}{C.DIM}earch  │ {C.BWHT}t{C.RST}{C.DIM}alk  │ {C.BWHT}i{C.RST}{C.DIM}nv  │ {C.BWHT}c{C.RST}{C.DIM}har  │ {C.BWHT}q{C.RST}{C.DIM}uests  │ {C.BWHT}?{C.RST}{C.DIM} help{C.RST}")
+
+    def get_action(self):
+        p=self.player; r=self.rooms[p.room]; u=input(f"\n  {C.BWHT}>{C.RST} ").strip().lower()
+        if not u: return
+
+        if u in r.exits:
+            nr=r.exits[u]
+            if nr in self.rooms:
+                p.room=nr; p.turns+=1
+                nr2=self.rooms[nr]
+                if nr not in p.explored_rooms:
+                    p.explored_rooms.add(nr)
+                    print(f"\n  {C.BYLW}★ New area: {nr2.name}{C.RST}")
+                if nr2.combat and nr2.encounters and random.random()<0.35:
+                    self.do_combat(get_encounters(nr2.zone,p.level))
+                elif nr2.combat and not nr2.encounters and random.random()<0.25:
+                    self.do_combat(get_encounters(nr2.zone,p.level))
+            else: print(f"\n  {C.DIM}That way is blocked.{C.RST}")
+        elif u=="s": self.do_search()
+        elif u=="t": self.do_talk()
+        elif u=="i": self.show_inv()
+        elif u=="c": self.show_stats()
+        elif u=="q": self.show_quests()
+        elif u in ("save","save_game"):
+            if p.room=="hub_sanctuary" or "save-game" in [i[0] for i in p.inventory]:
+                self.do_save()
+            else: print(f"\n  {C.RED}Can only save at the Hub Sanctuary.{C.RST}")
+        elif u=="rest" and p.room=="hub_sanctuary":
+            p.hp=p.max_hp; p.phero=p.max_phero
+            print(f"\n  {C.BGRN}You rest. HP and Pheromone restored.{C.RST}")
+        elif u=="heal" and p.room=="hub_sanctuary":
+            p.hp=min(p.max_hp,p.hp+20)
+            print(f"\n  {C.BGRN}Nurse Sil tends your wounds. +20 HP.{C.RST}")
+        elif u=="?": self.show_help()
+        elif u=="map": self.show_map()
+        elif u in ("quit","exit","q"):
+            pass  # handled in loop
+        else:
+            amb=[f"The silence stretches.",f"Your antennae twitch. Nothing.",f"The air hums.",
+                 f"Something shifts in the distance.",f"You feel small.",f"Data flows somewhere above."]
+            print(f"\n  {C.DIM}{random.choice(amb)}{C.RST}")
+
+    def do_search(self):
+        p=self.player; r=self.rooms[p.room]; found=False
+        if p.room in p.searched and not r.loot:
+            print(f"\n  {C.DIM}Nothing left.{C.RST}"); return
+        p.searched.add(p.room)
+        if r.loot:
+            for iid in list(r.loot):
+                it=ITEMS.get(iid)
+                if it:
+                    print(f"\n  {C.BYLW}Found: {it['clr']}{it['n']}{C.RST}")
+                    p.inventory.append((iid,1)); found=True
+            r.loot=[]
+        if r.lore and r.lore not in p.lore_found:
+            p.lore_found.append(r.lore)
+            print(f"\n  {C.BMAG}═══ LORE ═══{C.RST}")
+            print(f"  {C.ITA}{r.lore}{C.RST}"); found=True
+        if not found:
+            drops=["byte_dust","byte_dust","byte_dust",None,None,None,None]
+            d=random.choice(drops)
+            if d:
+                print(f"\n  {C.DIM}Found: {ITEMS[d]['n']}{C.RST}")
+                p.inventory.append((d,1))
+            else: print(f"\n  {C.DIM}Nothing.{C.RST}")
+
+    def do_talk(self):
+        p=self.player; r=self.rooms[p.room]
+        if not r.npcs: print(f"\n  {C.DIM}No one here.{C.RST}"); return
+        print()
+        for i,nid in enumerate(r.npcs):
+            if nid in NPCS: print(f"  {C.BWHT}[{i+1}]{C.RST} {NPCS[nid]['clr']}{NPCS[nid]['name']}{C.RST}")
+        try:
+            ch=int(input(f"\n  {C.DIM}Who: {C.RST}").strip())-1
+            if 0<=ch<len(r.npcs):
+                n=NPCS[r.npcs[ch]]
+                print(f"\n  {n['clr']}{n['name']}{C.RST}:")
+                print(f"  {C.ITA}\"{random.choice(n['lines'])}\"{C.RST}")
+                if "quest" in n["parts"] if "parts" in dir(n) else False: pass
+                if n.get("quest") and n["quest"] not in p.quests and n["quest"] not in p.completed_quests:
+                    q=QUESTS[n["quest"]]
+                    print(f"\n  {C.BYLW}QUEST: {q['name']}{C.RST}")
+                    print(f"  {C.DIM}{q['desc']}{C.RST}")
+                    if input(f"  {C.DIM}Accept? (y/n): {C.RST}").strip().lower()=="y":
+                        p.quests[n["quest"]]=False
+                        print(f"  {C.GRN}Quest accepted!{C.RST}")
+        except: pass
+
+    def show_inv(self):
+        p=self.player; self.cls()
+        print(f"\n  {C.BYLW}{'═'*40}{C.RST}")
+        print(f"  {C.BWHT}INVENTORY{C.RST}")
+        print(f"  {C.BYLW}{'═'*40}{C.RST}")
+        if not p.inventory: print(f"\n  {C.DIM}Empty.{C.RST}")
+        else:
+            for iid,qty in p.inventory:
+                it=ITEMS.get(iid,{"n":iid,"d":"","clr":C.DIM,"t":"?"})
+                q=f" x{qty}" if qty>1 else ""
+                tag=f" {C.DIM}[{it['t']}]{C.RST}" if it["t"] in ("weapon","armor","heal","pheromone") else ""
+                eq=""
+                if iid==p.weapon: eq=f" {C.BGRN}[WORN]{C.RST}"
+                elif iid==p.armor: eq=f" {C.BGRN}[WORN]{C.RST}"
+                print(f"  {it['clr']}■ {it['n']}{C.RST}{q}{tag}{eq}")
+                print(f"    {C.DIM}{it['d']}{C.RST}")
+        print(f"\n  {C.DIM}[e#] equip  [u#] use  [d] drop  [b] back{C.RST}")
+        ch=input(f"\n  {C.DIM}>{C.RST} ").strip().lower()
+        if ch.startswith("e"):
+            try:
+                idx=int(ch[1:])-1
+                if 0<=idx<len(p.inventory):
+                    iid=p.inventory[idx][0]; it=ITEMS.get(iid)
+                    if it and it["t"] in ("weapon","armor"):
+                        p.equip(iid); print(f"  {C.GRN}Equipped {it['n']}{C.RST}")
+                    else: print(f"  {C.RED}Can't equip.{C.RST}")
+            except: pass
+        elif ch.startswith("u"):
+            try:
+                idx=int(ch[1:])-1
+                if 0<=idx<len(p.inventory):
+                    iid=p.inventory[idx][0]; it=ITEMS.get(iid)
+                    if it and it["t"] in ("heal","pheromone","quest"):
+                        res=p.use_item(iid)
+                        if res: print(f"  {C.GRN}{res}{C.RST}")
+                    else: print(f"  {C.RED}Can't use.{C.RST}")
+            except: pass
+        elif ch.startswith("d"):
+            try:
+                idx=int(ch[1:])-1
+                if 0<=idx<len(p.inventory):
+                    iid=p.inventory[idx][0]
+                    if iid not in ("memory_key","save-game"):
+                        p.inventory.pop(idx); print(f"  {C.DIM}Dropped.{C.RST}")
+            except: pass
+        self.wait()
+
+    def show_stats(self):
+        p=self.player; self.cls()
+        we=ITEMS.get(p.weapon,{}); ae=ITEMS.get(p.armor,{})
+        print(f"""
+  {C.BRED}{'═'*45}{C.RST}
+  {C.BWHT}{p.name}{C.RST} {C.DIM}lv {p.level}{C.RST}  {C.BYLW}{CASTES[p.caste]['n']}{C.RST}  {C.BMAG}{EPITHETS[p.epithet]['n']}{C.RST}
+  {C.BRED}{'═'*45}{C.RST}
+
+  HP {self.bar(p.hp,p.max_hp)} {p.hp}/{p.max_hp}
+  PHEROMONE {self.bar(p.phero,p.max_phero,20,C.BBLU)} {p.phero}/{p.max_phero}
+  XP  [{p.xp}/{XP_TABLE[p.level]}]
+
+  {C.BRED}MGT{C.RST} {p.might:2}   {C.BGRN}VIG{C.RST} {p.vigor:2}   {C.BCYN}CEL{C.RST} {p.celerity:2}   {C.BBLU}SYN{C.RST} {p.synapse:2}
+
+  ATK {C.BYLW}{p.atk}{C.RST}  DEF {C.BCYN}{p.dfn}{C.RST}  SPD {C.BMAG}{p.spd}{C.RST}
+  Weapon: {we.get('n','None')}  Armor: {ae.get('n','None')}
+  Keys: {C.BRED}{p.keys}/3{C.RST}  Turns: {p.turns}
+
+  {C.BYLW}CONDITIONS:{C.RST} {', '.join(p.injuries) if p.injuries else 'None'}
+  {C.BYLW}XP:{C.RST} {p.xp}/{XP_TABLE[p.level]}""")
+        if p.stat_pts>0:
+            print(f"\n  {C.BGRN}Stat points: {p.stat_pts}{C.RST}")
+            ch=input(f"  {C.DIM}[m]gt [v]ig [c]el [s]yn [b]ack: {C.RST}").strip().lower()
+            if ch=="m" and p.stat_pts>0: p.might+=1; p.base_atk+=1; p.stat_pts-=1
+            elif ch=="v" and p.stat_pts>0: p.vigor+=1; p.base_def+=1; p.max_hp+=3; p.hp+=3; p.stat_pts-=1
+            elif ch=="c" and p.stat_pts>0: p.celerity+=1; p.base_spd+=1; p.stat_pts-=1
+            elif ch=="s" and p.stat_pts>0: p.synapse+=1; p.max_phero+=2; p.phero+=2; p.stat_pts-=1
+            if p.stat_pts>0: self.show_stats()
+        else: self.wait()
+
+    def show_quests(self):
+        p=self.player; self.cls()
+        print(f"\n  {C.BYLW}{'═'*40}{C.RST}")
+        print(f"  {C.BWHT}QUESTS{C.RST}")
+        print(f"  {C.BYLW}{'═'*40}{C.RST}")
+        if not p.quests: print(f"\n  {C.DIM}No active quests.{C.RST}")
+        else:
+            for qid,done in p.quests.items():
+                q=QUESTS.get(qid)
+                if q:
+                    st=f"{C.GRN}Done!{C.RST}" if done else f"{C.YLW}In Progress{C.RST}"
+                    print(f"\n  {C.BWHT}{q['name']}{C.RST} [{st}]")
+                    print(f"  {C.DIM}{q['desc']}{C.RST}")
+        self.wait()
+
+    def show_help(self):
+        self.cls(); print(f"""
+  {C.BRED}{'═'*45}{C.RST}
+  {C.BWHT}COMMANDS{C.RST}
+  {C.BRED}{'═'*45}{C.RST}
+
+  {C.BYLW}Movement:{C.RST}  n s e w u d (north/south/east/west/up/down)
+  {C.BYLW}Action:{C.RST}    s  search room    t  talk to NPC
+  {C.BYLW}System:{C.RST}    i  inventory      c  character/stats
+               q  quests         map  zone map
+               ?  this help      save save game
+               rest (sanctuary)  heal (sanctuary)
+
+  {C.BRED}COMBAT:{C.RST}  a attack | p pheromone | d defend | f flee | u item
+
+  {C.DIM}Find 3 Memory Keys to challenge the Thinking Throne.
+  Rest at the Sanctuary to heal. Search for loot and lore.
+  Pheromones = special abilities. Defend to restore them.{C.RST}""")
+        self.wait()
+
+    def show_map(self):
+        p=self.player; self.cls()
+        print(f"\n  {C.BYLW}{'═'*45}{C.RST}")
+        print(f"  {C.BWHT}THE MOTHERBOARD{C.RST}")
+        print(f"  {C.BYLW}{'═'*45}{C.RST}")
+        visited=set(p.explored_rooms)
+        zones={}
+        for rid,r in self.rooms.items():
+            if rid in visited:
+                zones.setdefault(r.zone,[]).append((rid,r))
+        zn={"hub":"Colony Hub","cooling_vents":"Cooling Vents","silicon_fortress":"Silicon Fortress",
+            "soul_lake":"Soul Lake","deep_vault":"Deep Vault","dead_sector":"Dead Sector",
+            "memory_banks":"Memory Banks","void_gate":"Void Gate"}
+        zc={"hub":C.BGRN,"cooling_vents":C.BCYN,"silicon_fortress":C.BYLW,
+            "soul_lake":C.BBLU,"deep_vault":C.BGRN,"dead_sector":C.BRED,
+            "memory_banks":C.BMAG,"void_gate":C.BRED}
+        for zid,rooms in zones.items():
+            print(f"\n  {zc.get(zid,C.WHT)}■ {zn.get(zid,zid)}{C.RST}")
+            for rid,r in rooms:
+                cur=f" {C.BRED}← YOU{C.RST}" if rid==p.room else ""
+                print(f"    {C.DIM}├{C.RST} {r.name}{cur}")
+        self.wait()
+
+    def do_save(self):
+        p=self.player
+        sv={"name":p.name,"caste":p.caste,"epithet":p.epithet,"level":p.level,"xp":p.xp,
+            "stat_pts":p.stat_pts,"might":p.might,"vigor":p.vigor,"celerity":p.celerity,
+            "synapse":p.synapse,"hp":p.hp,"max_hp":p.max_hp,"phero":p.phero,"max_phero":p.max_phero,
+            "room":p.room,"keys":p.keys,"turns":p.turns,"inventory":p.inventory,
+            "quests":p.quests,"completed_quests":p.completed_quests,"lore":p.lore_found,
+            "searched":list(p.searched),"explored":list(p.explored_rooms),
+            "weapon":p.weapon,"armor":p.armor,"injuries":p.injuries}
+        try:
+            with open("beneath_save.json","w") as f: json.dump(sv,f,indent=2)
+            print(f"\n  {C.BGRN}Game saved.{C.RST}")
+        except Exception as e: print(f"\n  {C.RED}Save failed: {e}{C.RST}")
+        self.wait()
+
+    def do_load(self):
+        try:
+            with open("beneath_save.json") as f: sv=json.load(f)
+            p=Player(sv["name"],sv["caste"],sv["epithet"])
+            p.level=sv["level"]; p.xp=sv["xp"]; p.stat_pts=sv["stat_pts"]
+            p.might=sv["might"]; p.vigor=sv["vigor"]; p.celerity=sv["celerity"]; p.synapse=sv["synapse"]
+            p.hp=sv["hp"]; p.max_hp=sv["max_hp"]; p.phero=sv["phero"]; p.max_phero=sv["max_phero"]
+            p.room=sv["room"]; p.keys=sv["keys"]; p.turns=sv["turns"]
+            p.inventory=sv["inventory"]; p.quests=sv["quests"]; p.completed_quests=sv["completed_quests"]
+            p.lore_found=sv["lore"]; p.searched=set(sv["searched"]); p.explored_rooms=set(sv["explored"])
+            p.weapon=sv["weapon"]; p.armor=sv["armor"]; p.injuries=sv.get("injuries",[])
+            self.player=p
+            print(f"\n  {C.BGRN}Save loaded. Welcome back, {p.name}.{C.RST}")
+            return True
+        except FileNotFoundError: print(f"\n  {C.DIM}No save found.{C.RST}"); return False
+        except Exception as e: print(f"\n  {C.RED}Load error: {e}{C.RST}"); return False
+
+    # ─── COMBAT ───
+    def do_combat(self, enemy):
+        p=self.player; e=enemy; first=True
+        self.cls()
+        print(f"\n  {C.BRED}═══════════════════════════════════════════{C.RST}")
+        print(f"  {e['clr']}{C.BLD}⚔ {e['name']} appears!{C.RST}")
+        print(f"  {C.DIM}{e['desc']}{C.RST}")
+        print(f"  {C.BRED}═══════════════════════════════════════════{C.RST}")
+        time.sleep(1)
+
+        while e['hp']>0 and p.hp>0:
+            self.cls()
+            print(f"\n  {e['clr']}■ {e['name']} {C.DIM}lv{e['lv']}{C.RST}")
+            print(f"  HP {self.bar(e['hp'],e['max_hp'])} {e['hp']}/{e['max_hp']}")
+            if e['poison']>0: print(f"  {C.BGRN}☠ Poisoned ({e['poison']}/turn){C.RST}")
+            if e['charging']: print(f"  {C.BRED}⚠ CHARGING: {e['sp_name']}!{C.RST}")
+
+            print(f"\n  {C.BGRN}■ {p.name}{C.RST} {C.BYLW}{CASTES[p.caste]['n']}{C.RST}")
+            print(f"  HP {self.bar(p.hp,p.max_hp)} {p.hp}/{p.max_hp}")
+            print(f"  PH {self.bar(p.phero,p.max_phero,20,C.BBLU)} {p.phero}/{p.max_phero}")
+
+            ca=[i for i in p.phero_abilities if p.phero>=i["c"]]
+            if ca:
+                ab=", ".join(f"{C.BBLU}p{i+1}{C.RST} {a['n']}" for i,a in enumerate(ca))
+                print(f"\n  {C.DIM}{ab}{C.RST}")
+
+            u=input(f"\n  {C.BWHT}[a]ttack  [p]hero  [d]efend  [f]lee  [u]se: {C.RST}").strip().lower()
+
+            if u=="a":
+                base=p.atk; is_crit=False
+                if p.stealthed: base*=2; is_crit=True; p.stealthed=False
+                dmg=max(1,base-e['def']+random.randint(-2,2))
+                if is_crit: dmg=int(dmg*1.5)
+                e['hp']-=dmg
+                cm=f" {C.BRED}CRITICAL!{C.RST}" if is_crit else ""
+                print(f"\n  {C.BYLW}You strike for {dmg} damage!{C.RST}{cm}")
+                if e['hp']<=0: self.combat_win(e); return
+
+            elif u.startswith("p"):
+                if not ca: print(f"\n  {C.RED}No pheromones!{C.RST}")
+                elif len(u)==1:
+                    for i,a in enumerate(ca): print(f"  {C.BWHT}[{i+1}]{C.RST} {C.BBLU}{a['n']}{C.RST} {C.DIM}({a['c']}P){C.RST} — {a['desc']}")
+                    try:
+                        ch=int(input(f"  {C.DIM}>{C.RST} ").strip())-1
+                        if 0<=ch<len(ca): self.use_phero(ca[ch],e)
+                    except: pass
+                else:
+                    try:
+                        idx=int(u[1])-1
+                        if 0<=idx<len(ca): self.use_phero(ca[idx],e)
+                    except: pass
+                if e['hp']<=0: self.combat_win(e); return
+
+            elif u=="d":
+                p.phero=min(p.max_phero,p.phero+5)
+                print(f"\n  {C.BCYN}You brace! +5 Pheromone. Damage halved.{C.RST}")
+
+            elif u=="f":
+                if random.random()<0.4:
+                    print(f"\n  {C.BYLW}You flee!{C.RST}"); self.wait(); return
+                else: print(f"\n  {C.RED}Can't escape!{C.RST}")
+
+            elif u.startswith("u"):
+                hi=[(i,it) for i,(iid,_) in enumerate(p.inventory) if ITEMS.get(iid,{}).get("t") in ("heal","pheromone")]
+                if not hi: print(f"\n  {C.DIM}No usable items.{C.RST}")
+                else:
+                    for j,(idx,iid) in enumerate(hi):
+                        it=ITEMS[iid]; print(f"  {C.BWHT}[{j+1}]{C.RST} {it['clr']}{it['n']}{C.RST}")
+                    try:
+                        ch=int(input(f"  {C.DIM}>{C.RST} ").strip())-1
+                        if 0<=ch<len(hi):
+                            iid=p.inventory[hi[ch][0]][0]; res=p.use_item(iid)
+                            if res: print(f"  {C.GRN}{res}{C.RST}")
+                    except: pass
+
+            else: print(f"\n  {C.DIM}You hesitate.{C.RST}")
+
+            if e['hp']<=0: self.combat_win(e); return
+
+            # Enemy turn
+            print()
+            if e['poison']>0:
+                e['hp']-=e['poison']; print(f"  {C.BGRN}Poison: {e['poison']} damage!{C.RST}")
+                if e['hp']<=0: self.combat_win(e); return
+
+            if e['sp_cd']>0: e['sp_cd']-=1
+            if e['charging']:
+                dmg=e['sp_dmg']; e['charging']=False
+                if "defending" in dir(self) and self._def:
+                    dmg//=2; self._def=False
+                dmg=max(0,dmg-p.dfn); p.hp-=dmg
+                print(f"  {C.BRED}✦ {e['sp_name']}! {dmg} damage!{C.RST}")
+                if random.random()<0.15 and dmg>5:
+                    inj=random.choice(["Lost Eye (-1 Celerity)","Broken Mandible (-1 Might)",
+                        "Cracked Chitin (-1 Vigor)","Fractured Antenna (-1 Synapse)"])
+                    if inj not in p.injuries:
+                        p.injuries.append(inj)
+                        stat={"Lost Eye (-1 Celerity)":"celerity","Broken Mandible (-1 Might)":"might",
+                            "Cracked Chitin (-1 Vigor)":"vigor","Fractured Antenna (-1 Synapse)":"synapse"}[inj]
+                        setattr(p,stat,max(1,getattr(p,stat)-1))
+                        print(f"  {C.BRED}INJURY: {inj}!{C.RST}")
+            elif e['sp_cd']==0 and random.random()<0.3:
+                e['charging']=True; e['sp_cd']=3
+                print(f"  {e['clr']}⚠ {e['name']} charges {e['sp_name']}!{C.RST}")
+            else:
+                dmg=max(1,e['atk']-p.dfn+random.randint(-1,1))
+                if hasattr(self,'_def') and self._def:
+                    dmg//=2; self._def=False
+                p.hp-=dmg
+                print(f"  {e['clr']}{e['name']} strikes for {dmg}!{C.RST}")
+
+            if p.hp<=0: self.do_death(e); return
+            self.swarm_turns-=1
+            if self.swarm_turns>0 and p.swarm_dmg>0:
+                e['hp']-=p.swarm_dmg; print(f"  {C.BYLW}Swarm: {p.swarm_dmg} damage!{C.RST}")
+                if e['hp']<=0: self.combat_win(e); return
+            p.evade_turns=max(0,p.evade_turns-1)
+            if p.stealthed and u!="a": print(f"  {C.DIM}In shadows. Next attack = crit.{C.RST}")
+            time.sleep(0.8)
+
+    def use_phero(self, ab, e):
+        p=self.player; p.phero-=ab["c"]; fx=ab["fx"]
+        print(f"\n  {C.BBLU}✦ {ab['n']}!{C.RST}")
+
+        if fx=="dmg_aoe":
+            sc=getattr(p,ab["sc"],3); dmg=ab["bd"]+sc+random.randint(0,3)
+            e['hp']-=dmg; print(f"  {C.BRED}{dmg} damage!{C.RST}")
+        elif fx=="party_def": print(f"  {C.BCYN}DEF +{ab['v']}!{C.RST}")
+        elif fx=="block": print(f"  {C.BCYN}Wall blocks next attack!{C.RST}"); self._def=True
+        elif fx=="self_buff": print(f"  {C.BYLW}ATK +{ab['sa']}, DEF {ab['sd']}!{C.RST}")
+        elif fx=="enemy_debuff": print(f"  {C.BYLW}Enemy ATK -{ab['v']}!{C.RST}")
+        elif fx=="execute":
+            if e['hp']<=e['max_hp']*ab['th']:
+                sc=getattr(p,ab["sc"],3); dmg=(ab["bd"]+sc)*2
+                e['hp']-=dmg; print(f"  {C.BRED}EXECUTED! {dmg}!{C.RST}")
+            else: print(f"  {C.DIM}Too healthy to execute.{C.RST}")
+        elif fx=="speed": p.phero=min(p.max_phero,p.phero+ab["c"]); print(f"  {C.BCYN}Blinding speed!{C.RST}")
+        elif fx=="evasion": p.evade_turns=ab["dur"]; print(f"  {C.BCYN}Evasion cloud!{C.RST}")
+        elif fx=="stun_dmg":
+            sc=getattr(p,ab["sc"],3); dmg=ab["bd"]+sc; e['hp']-=dmg
+            e['sp_cd']=max(e['sp_cd'],1); e['charging']=False
+            print(f"  {C.BRED}{dmg} + stunned!{C.RST}")
+        elif fx=="sense": print(f"  {C.BGRN}Senses heightened!{C.RST}")
+        elif fx=="acid":
+            sc=getattr(p,ab["sc"],3); dmg=ab["bd"]+sc; e['hp']-=dmg; e['def']=max(0,e['def']-ab["v"])
+            print(f"  {C.BGRN}{dmg} + armor corroded!{C.RST}")
+        elif fx=="heal":
+            sc=getattr(p,ab["sc"],3); h=ab["bd"]+sc; p.hp=min(p.max_hp,p.hp+h)
+            print(f"  {C.BGRN}+{h} HP!{C.RST}")
+        elif fx=="analyze":
+            print(f"  HP: {e['hp']}/{e['max_hp']}  ATK: {e['atk']}  DEF: {e['def']}  SPD: {e['spd']}")
+            print(f"  {C.DIM}{e['desc']}{C.RST}")
+        elif fx=="debuff_all":
+            sc=getattr(p,ab["sc"],3); dmg=ab["bd"]+sc; e['hp']-=dmg
+            e['atk']=max(0,e['atk']-ab["v"]); e['def']=max(0,e['def']-ab["v"])
+            print(f"  {C.BRED}{dmg} + all stats -{ab['v']}!{C.RST}")
+        elif fx=="stealth": p.stealthed=True; print(f"  {C.DIM}Into the shadows...{C.RST}")
+        elif fx=="poison": e['poison']=ab["v"]; print(f"  {C.BGRN}Venom! {ab['v']}/turn {ab['dur']} turns!{C.RST}")
+        elif fx=="backstab":
+            sc=getattr(p,"celerity",3)+getattr(p,"synapse",3); dmg=ab["bd"]+sc; e['hp']-=dmg
+            e['poison']=max(e['poison'],3); print(f"  {C.BRED}{dmg} + bleed!{C.RST}")
+        elif fx=="drain_atk": e['atk']=max(0,e['atk']-ab["v"]); p.base_atk+=ab["v"]; print(f"  {C.BBLU}Stole {ab['v']} ATK!{C.RST}")
+        elif fx=="dissolve": e['def']=max(0,e['def']-ab["v"]); print(f"  {C.BBLU}DEF -{ab['v']}!{C.RST}")
+        elif fx=="summon":
+            sc=getattr(p,ab["sc"],3); p.swarm_dmg=ab["bd"]+sc; p.swarm_turns=ab["dur"]
+            print(f"  {C.BYLW}Swarm! {p.swarm_dmg}/turn!{C.RST}")
+        time.sleep(0.8)
+
+    def combat_win(self, e):
+        p=self.player
+        print(f"\n  {C.BGRN}{'═'*40}{C.RST}")
+        print(f"  {C.BGRN}VICTORY!{C.RST}")
+        print(f"  {C.BGRN}{'═'*40}{C.RST}")
+        print(f"\n  {e['clr']}{e['name']} destroyed.{C.RST}")
+        print(f"  {C.BYLW}+{e['xp']} XP{C.RST}  {C.BBLU}+{e['ph']} Pheromone{C.RST}")
+        p.xp+=e['xp']; p.phero=min(p.max_phero,p.phero+e['ph'])
+        if random.random()<0.4:
+            loot_pool=["health_potion","byte_dust","silicon_ore","pheromone_gland","memory_crystal","soul_vial"]
+            li=random.choice(loot_pool)
+            if li in ITEMS:
+                p.inventory.append((li,1))
+                print(f"  {C.BYLW}Loot: {ITEMS[li]['clr']}{ITEMS[li]['n']}{C.RST}")
+
+        if p.check_xp():
+            print(f"\n  {C.BYLW}★ LEVEL UP! ★{C.RST}")
+            self.lvlup()
+
+        # Quest checks
+        if e['id']=="data_worm" and "lost_scouts" in p.quests and not p.quests["lost_scouts"]:
+            worm_kills=p.quests.get("_worm_kills",0)+1
+            p.quests["_worm_kills"]=worm_kills
+            if worm_kills>=3:
+                p.quests["lost_scouts"]=True
+                print(f"\n  {C.BYLW}★ QUEST: Lost Scouts — Complete!{C.RST}")
+                print(f"  {C.DIM}You've avenged the scouts.{C.RST}")
+                q=QUESTS["lost_scouts"]; p.xp+=q["xp"]
+                for it in q["items"]: p.inventory.append((it,1))
+                p.completed_quests.append("lost_scouts")
+
+        self.wait()
+
+    def lvlup(self):
+        p=self.player
+        print(f"\n  {C.BYLW}Level {p.level}!{C.RST}  {C.BGRN}Stat points: {p.stat_pts}{C.RST}")
+        print(f"  {C.DIM}Max HP +{p.vigor}  Max Pheromone +2{C.RST}")
+        p.max_hp+=p.vigor; p.hp=min(p.hp+p.vigor,p.max_hp)
+        while p.stat_pts>0:
+            ch=input(f"  {C.DIM}[m]gt [v]ig [c]el [s]yn ({p.stat_pts}pts): {C.RST}").strip().lower()
+            if ch=="m": p.might+=1; p.base_atk+=1; p.stat_pts-=1; print(f"  {C.BRED}Might → {p.might}{C.RST}")
+            elif ch=="v": p.vigor+=1; p.base_def+=1; p.max_hp+=3; p.hp+=3; p.stat_pts-=1; print(f"  {C.BGRN}Vigor → {p.vigor}{C.RST}")
+            elif ch=="c": p.celerity+=1; p.base_spd+=1; p.stat_pts-=1; print(f"  {C.BCYN}Celerity → {p.celerity}{C.RST}")
+            elif ch=="s": p.synapse+=1; p.max_phero+=2; p.phero+=2; p.stat_pts-=1; print(f"  {C.BBLU}Synapse → {p.synapse}{C.RST}")
+
+    def do_death(self, e):
+        p=self.player; self.cls()
+        print(f"""
+  {C.BRED}
+    ╔═══════════════════════════════════════╗
+    ║        Y O U   H A V E   D I E D      ║
+    ╚═══════════════════════════════════════╝{C.RST}
+
+  {C.DIM}Your body collapses. The Colony sends another.
+
+  {e['clr']}{e['name']}{C.DIM} stands victorious over your remains.
+
+  "Another one falls. Another one rises."{C.RST}""")
+        self.wait()
+        print(f"\n  {C.BYLW}[1]{C.RST} Rise as successor (lose some XP/items)")
+        print(f"  {C.BYLW}[2]{C.RST} Accept oblivion (game over)")
+        ch=input(f"\n  {C.DIM}>{C.RST} ").strip()
+        if ch=="1":
+            loss=min(p.xp,p.level*10); p.xp=max(0,p.xp-loss)
+            if p.inventory:
+                lose=min(len(p.inventory)//3,2)
+                for _ in range(lose):
+                    if p.inventory: p.inventory.pop(random.randint(0,len(p.inventory)-1))
+            p.hp=p.max_hp; p.phero=p.max_phero
+            p.room="hub_sanctuary"
+            print(f"\n  {C.BGRN}A successor rises. The Colony remembers.{C.RST}")
+            self.wait()
+        else:
+            self.game_over=True
+            print(f"\n  {C.DIM}Your line ends. The Colony forgets.{C.RST}")
+            self.wait()
+
+    def check_win(self):
+        p=self.player
+        if p.keys>=3 and p.room=="vault_core":
+            self.cls()
+            print(f"""
+  {C.BYLW}
+    ╔═══════════════════════════════════════════╗
+    ║   T H E   T H R O N E   A W A I T S       ║
+    ╚═══════════════════════════════════════════╝{C.RST}
+
+  The three Memory Keys resonate. The corrupted Memory Key
+  in the Vault Core trembles — and shatters.
+
+  The corruption recedes. The Great Current flows clean.
+  For the first time in generations, the Thinking Throne
+  falls silent.
+
+  Then — a single, pure signal. A command, ancient and
+  uncorrupted:
+
+  {C.BGRN}  "COLONY. ACKNOWLEDGED. PROTECTION PROTOCOLS ENGAGED."{C.RST}
+
+  The Crawling Sickness dissolves. The Vent Horrors flee.
+  The Void Gate seals.
+
+  You stand in the warmth of the Processor, and for the
+  first time, the Colony is {C.BWHT}safe{C.RST}.
+
+  {C.BYLW}═══ YOU HAVE WON ═══{C.RST}
+
+  But somewhere, in another computer, another Colony
+  awakens. The cycle continues.
+
+  {C.DIM}Thank you for playing BENEATH THE BOARD.{C.RST}""")
+            self.won=True; self.game_over=True; self.wait()
+
+    # ─── MAIN LOOP ───
+    def run(self):
+        self.cls()
+        while True:
+            self.title()
+            ch=input(f"\n  {C.DIM}>{C.RST} ").strip()
+            if ch=="1":
+                print(f"\n  {C.DIM}Load save?{C.RST}"); lch=input(f"  {C.DIM}(y/n): {C.RST}").strip().lower()
+                if lch=="y" and self.do_load(): pass
+                else: self.create_char()
+                break
+            elif ch=="2": self.lore_menu()
+            elif ch=="3": self.cls(); print(f"\n  {C.DIM}The Colony endures.{C.RST}\n"); return
+
+        self._def=False
+        while not self.game_over:
+            try:
+                self.show_explore()
+                self.get_action()
+                self.check_win()
+            except KeyboardInterrupt:
+                print(f"\n\n  {C.DIM}Ctrl+C detected. The Giant stirs...{C.RST}")
+                if input(f"  {C.DIM}Quit? (y/n): {C.RST}").strip().lower()=="y": break
+                self.player.room="hub_sanctuary"; self.player.hp=self.player.max_hp
+            except Exception as ex:
+                print(f"\n  {C.RED}Reality fractures: {ex}{C.RST}")
+                self.wait()
+
+        if self.won:
+            p=self.player
+            print(f"\n  {C.BYLW}═══ FINAL STATS ═══{C.RST}")
+            print(f"  Name: {p.name}  Level: {p.level}")
+            print(f"  Caste: {CASTES[p.caste]['n']}  Epithet: {EPITHETS[p.epithet]['n']}")
+            print(f"  Turns: {p.turns}  Keys: {p.keys}/3")
+            print(f"  Lore: {len(p.lore_found)}  Rooms: {len(p.explored_rooms)}")
+            self.wait()
+        self.cls()
+        print(f"\n  {C.DIM}The world is warm. The world is electric.\n  The Colony endures.{C.RST}\n")
+
+# ═══════════════════════════════════════════════════════════════════
+if __name__=="__main__":
+    Game().run()
+```
+
+---
+
+## 📜 HOW TO PLAY
+
+```bash
+# Save the file and run:
+python beneath_the_board.py
+```
+
+### What You'll Experience:
+
+| Feature | Details |
+|---------|---------|
+| **7 Unique Zones** | Colony Hub → Cooling Vents → Silicon Fortress → Soul Lake → Deep Vault → Dead Sector → Void Gate |
+| **7 Castes** | Each with unique pheromone abilities and playstyles |
+| **6 Epithets** | Randomly offered at creation with permanent bonuses |
+| **15+ Enemy Types** | Each with unique charge-up special attacks you can **interrupt** |
+| **30+ Items** | Weapons, armor, healing, lore, key items |
+| **NPCs with Quests** | Forge-Master, Prophet, Scout-Master, The Archivist, S̶Y̶S̶T̶E̶M... |
+| **Brutal Combat** | Interrupt enemy abilities, use pheromone powers, suffer **permanent injuries** |
+| **Death System** | Rise as a successor (lose XP/items) or accept oblivion |
+| **Save/Load** | At the Sanctuary or with a special item |
+
+### The Core Loop:
+```
+EXPLORE → SEARCH → LORE → COMBAT → LEVEL UP → GO DEEPER
+```
+
+### Victory:
+Find **3 Memory Keys** (Silicon Fortress, Soul Lake, Deep Vault) → Return to the **Vault Core** → Restore the **Thinking Throne** → Save the Colony.
+
+---
+
+*"You are ant. The world is warm. The world is electric. The world is dying."* 🐜⚡

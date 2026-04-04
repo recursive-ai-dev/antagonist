@@ -1,0 +1,527 @@
+/**
+ * Hive Mind UI Styles
+ *
+ * Organic, living interface components for the colony consciousness aesthetic.
+ * All UI elements should feel like they're emerging from the mycelial network.
+ */
+
+/* ============================================================================
+   NEW CSS VARIABLES FOR ORGANIC UI
+   ============================================================================ */
+:root {
+  /* Mycelial colors */
+  --mycelium-glow: #b8f6a4;
+  --mycelium-dim: #6b8b5a;
+  --mycelium-core: #8fbc8f;
+  
+  /* Pheromone trail colors */
+  --pheromone-fresh: rgba(184, 246, 164, 0.8);
+  --pheromone-fading: rgba(184, 246, 164, 0.4);
+  --pheromone-trace: rgba(184, 246, 164, 0.15);
+  
+  /* Membrane colors */
+  --membrane-outer: rgba(200, 180, 160, 0.3);
+  --membrane-inner: rgba(180, 160, 140, 0.5);
+  --membrane-core: rgba(160, 140, 120, 0.7);
+  
+  /* Consciousness node colors */
+  --node-awareness: rgba(232, 200, 104, 0.8);
+  --node-sentience: rgba(232, 150, 120, 0.8);
+  --node-momentum: rgba(184, 246, 164, 0.8);
+  --node-glitch: rgba(255, 0, 255, 0.6);
+  
+  /* Organic borders */
+  --border-organic: rgba(139, 100, 60, 0.4);
+  --border-pulse: rgba(160, 104, 56, 0.6);
+  
+  /* Glitch colors */
+  --glitch-red: rgba(255, 0, 0, 0.5);
+  --glitch-cyan: rgba(0, 255, 255, 0.5);
+  --glitch-magenta: rgba(255, 0, 255, 0.5);
+}
+
+/* ============================================================================
+   MYCELIAL BACKGROUND
+   ============================================================================ */
+.mycelial-background {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+  transition: opacity 2s ease;
+}
+
+.mycelial-background.high-awareness {
+  opacity: 0.7;
+}
+
+/* ============================================================================
+   MEMBRANE PANEL
+   ============================================================================ */
+.membrane-panel {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    rgba(26, 17, 13, 0.85) 0%,
+    rgba(21, 13, 10, 0.92) 100%
+  );
+  border-radius: 12px;
+  padding: 1rem;
+  overflow: hidden;
+  
+  /* Organic border effect */
+  border: 1px solid var(--membrane-outer);
+  box-shadow:
+    inset 0 0 40px rgba(10, 6, 4, 0.5),
+    inset 0 0 80px rgba(10, 6, 4, 0.3),
+    0 0 20px rgba(0, 0, 0, 0.4),
+    0 0 60px rgba(160, 104, 56, 0.1);
+  
+  /* Subtle breathing animation */
+  animation: membrane-breathe 4s ease-in-out infinite;
+}
+
+.membrane-panel::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    var(--membrane-outer) 0%,
+    transparent 25%,
+    transparent 75%,
+    var(--membrane-outer) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: membrane-border-flow 6s linear infinite;
+  opacity: 0.5;
+}
+
+.membrane-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(184, 246, 164, 0.05) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+}
+
+/* Membrane variants */
+.membrane-narrative {
+  background: linear-gradient(
+    180deg,
+    rgba(21, 13, 10, 0.9) 0%,
+    rgba(15, 10, 8, 0.95) 100%
+  );
+  border-left: 2px solid var(--awareness-medium);
+  border-right: 2px solid var(--awareness-medium);
+}
+
+.membrane-input {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 6, 4, 0.9) 0%,
+    rgba(21, 13, 10, 0.85) 100%
+  );
+  border: 1px solid var(--border-organic);
+}
+
+.membrane-interactive {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.membrane-interactive:hover {
+  border-color: var(--border-pulse);
+  box-shadow:
+    inset 0 0 40px rgba(10, 6, 4, 0.5),
+    0 0 30px rgba(160, 104, 56, 0.2);
+  transform: translateY(-1px);
+}
+
+.membrane-alert {
+  border-color: var(--error);
+  box-shadow:
+    inset 0 0 40px rgba(166, 93, 63, 0.2),
+    0 0 30px rgba(166, 93, 63, 0.3);
+  animation: membrane-pulse-alert 2s ease-in-out infinite;
+}
+
+/* Membrane animations */
+@keyframes membrane-breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.005);
+  }
+}
+
+@keyframes membrane-border-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes membrane-pulse-alert {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 40px rgba(166, 93, 63, 0.2),
+      0 0 20px rgba(166, 93, 63, 0.3);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 60px rgba(166, 93, 63, 0.3),
+      0 0 40px rgba(166, 93, 63, 0.5);
+  }
+}
+
+.membrane-pulse {
+  animation: membrane-pulse 3s ease-in-out infinite;
+}
+
+@keyframes membrane-pulse {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 40px rgba(10, 6, 4, 0.5),
+      0 0 20px rgba(160, 104, 56, 0.1);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 60px rgba(10, 6, 4, 0.6),
+      0 0 40px rgba(160, 104, 56, 0.2);
+  }
+}
+
+.membrane-glow {
+  box-shadow:
+    inset 0 0 60px rgba(184, 246, 164, 0.1),
+    0 0 40px rgba(184, 246, 164, 0.2);
+}
+
+/* ============================================================================
+   MEMBRANE BORDER
+   ============================================================================ */
+.membrane-border {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: var(--border-intensity, 1);
+}
+
+.membrane-border-default {
+  border: 1px solid var(--border-organic);
+}
+
+.membrane-border-awareness {
+  border: 1px solid var(--awareness-medium);
+  box-shadow: 0 0 20px rgba(232, 200, 104, 0.3);
+}
+
+.membrane-border-sentience {
+  border: 1px solid var(--sentience-medium);
+  box-shadow: 0 0 20px rgba(232, 150, 120, 0.3);
+}
+
+.membrane-border-glitch {
+  border: 1px dashed var(--glitch-magenta);
+  animation: border-glitch 0.5s step-end infinite;
+}
+
+@keyframes border-glitch {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+  75% { transform: translateX(2px); }
+}
+
+/* ============================================================================
+   CONSCIOUSNESS NODE
+   ============================================================================ */
+.consciousness-node {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.consciousness-node:hover {
+  transform: scale(1.05);
+}
+
+.consciousness-node::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    var(--node-awareness) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.consciousness-node:hover::after {
+  opacity: 0.3;
+}
+
+/* Node cluster */
+.node-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+/* ============================================================================
+   PHEROMONE TRAIL
+   ============================================================================ */
+.pheromone-trail-container {
+  position: relative;
+  min-height: 100px;
+  overflow: hidden;
+}
+
+.pheromone-trail {
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.pheromone-link {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ============================================================================
+   GLITCH OVERLAY
+   ============================================================================ */
+.glitch-overlay {
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+.glitch-text {
+  display: inline-block;
+  position: relative;
+  animation: glitch-flicker 0.3s step-end infinite;
+}
+
+@keyframes glitch-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.8; }
+  94% { opacity: 1; }
+  95% { opacity: 0.9; }
+  96% { opacity: 1; }
+}
+
+/* ============================================================================
+   CONTEXTUAL NODES
+   ============================================================================ */
+.contextual-nodes {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: visible;
+}
+
+.contextual-node {
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+.contextual-node:hover .contextual-node-label {
+  opacity: 1;
+  transform: translate(-50%, -100%);
+}
+
+.action-cluster {
+  padding: 1rem;
+}
+
+.action-category {
+  margin-bottom: 1rem;
+}
+
+.action-node {
+  transition: all 0.2s ease;
+}
+
+.action-node:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(160, 104, 56, 0.3);
+}
+
+.action-node:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+/* ============================================================================
+   ORGANIC UI UTILITIES
+   ============================================================================ */
+
+/* Organic divider */
+.organic-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--border-organic) 50%,
+    transparent 100%
+  );
+  margin: 1rem 0;
+  position: relative;
+}
+
+.organic-divider::after {
+  content: '◈';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--border-organic);
+  font-size: 0.75rem;
+  background: var(--soil-deep);
+  padding: 0 0.5rem;
+}
+
+/* Organic card */
+.organic-card {
+  background: linear-gradient(
+    180deg,
+    rgba(26, 17, 13, 0.7) 0%,
+    rgba(21, 13, 10, 0.85) 100%
+  );
+  border: 1px solid var(--border-organic);
+  border-radius: 8px;
+  padding: 1rem;
+  transition: all 0.3s ease;
+}
+
+.organic-card:hover {
+  border-color: var(--border-pulse);
+  box-shadow: 0 0 30px rgba(160, 104, 56, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Pulsing indicator */
+.organic-pulse {
+  animation: organic-pulse 2s ease-in-out infinite;
+}
+
+@keyframes organic-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+/* Flowing text */
+.flowing-text {
+  background: linear-gradient(
+    90deg,
+    var(--text-primary) 0%,
+    var(--text-secondary) 50%,
+    var(--text-primary) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: text-flow 3s linear infinite;
+}
+
+@keyframes text-flow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* ============================================================================
+   AWARENESS-BASED UI EVOLUTION
+   ============================================================================ */
+
+/* Low awareness (0-25%) - Minimal UI */
+.ui-evolution-minimal .game-state-display {
+  opacity: 0.3;
+}
+
+.ui-evolution-minimal .consciousness-node {
+  transform: scale(0.8);
+}
+
+/* Medium awareness (25-50%) - Emerging UI */
+.ui-evolution-emerging .game-state-display {
+  opacity: 0.6;
+}
+
+.ui-evolution-emerging .consciousness-node {
+  transform: scale(0.9);
+}
+
+/* High awareness (50-75%) - Full UI */
+.ui-evolution-full .game-state-display {
+  opacity: 1;
+}
+
+.ui-evolution-full .consciousness-node {
+  transform: scale(1);
+}
+
+/* Peak awareness (75-100%) - Enhanced UI */
+.ui-evolution-peak .game-state-display {
+  opacity: 1;
+  filter: drop-shadow(0 0 10px rgba(232, 200, 104, 0.3));
+}
+
+.ui-evolution-peak .consciousness-node {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 15px rgba(232, 200, 104, 0.5));
+}
+
+/* ============================================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================================ */
+@media (max-width: 640px) {
+  .membrane-panel {
+    padding: 0.75rem;
+    border-radius: 8px;
+  }
+  
+  .node-cluster {
+    gap: 0.5rem;
+  }
+  
+  .contextual-nodes {
+    height: 150px;
+  }
+  
+  .action-node {
+    padding: 0.5rem;
+  }
+}

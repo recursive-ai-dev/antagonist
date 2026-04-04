@@ -1,0 +1,132 @@
+<h2>Three Approaches to Professional UI</h2>
+<p class="subtitle">Each approach addresses all 4 issues (spacing, polish, layout, theme) with different trade-offs</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: var(--soil-deep); padding: 16px; font-size: 12px;">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--soil-medium); border: 1px solid var(--border-medium); border-radius: 8px;">
+          <span style="color: var(--fungus-glow); font-weight: 700; font-size: 14px;">ANTAGONIST</span>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <span style="color: var(--awareness-bright);">AWR 45%</span>
+            <span style="color: var(--sentience-bright);">SEN 32%</span>
+            <span style="color: var(--text-tertiary);">Day 127</span>
+          </div>
+          <div style="display: flex; gap: 6px;">
+            <span style="padding: 4px 8px; border-radius: 4px; background: var(--soil-dark);">🔇</span>
+            <span style="padding: 4px 8px; border-radius: 4px; background: var(--soil-dark);">⚙</span>
+            <span style="padding: 4px 8px; border-radius: 4px; background: var(--soil-dark);">☰</span>
+          </div>
+        </div>
+        <div style="padding: 16px; background: rgba(21,13,10,0.6); border: 1px solid var(--border-subtle); border-radius: 8px; flex: 1; min-height: 80px; color: var(--text-secondary); font-size: 11px;">
+          Terminal Output (consistent spacing, clean typography)
+        </div>
+        <div style="display: flex; gap: 8px; padding: 10px; background: var(--soil-medium); border: 1px solid var(--border-medium); border-radius: 8px;">
+          <span style="color: var(--clay-orange); font-weight: 600;">&gt;</span>
+          <span style="color: var(--text-tertiary); flex: 1;">Input with Execute button</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 8px 14px; background: var(--soil-deep); border-top: 1px solid var(--border-subtle); border-radius: 0 0 8px 8px; font-size: 11px; color: var(--text-tertiary);">
+          <span>📍 Deep Tunnel</span>
+          <span>Explored: 12 | Awakened: 3 | Inv: 5</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Refined Consistency</h3>
+      <p>Keep the hive/organic theme but fix spacing with a proper 8px grid, unify borders/radii, consistent component heights. Clean up the CSS — remove duplication, consolidate tokens. Everything aligns, feels intentional.</p>
+      <div class="pros-cons" style="margin-top: 8px;">
+        <div class="pros"><h4>Pros</h4><ul><li>Fastest path to professional look</li><li>Keeps the game's identity</li><li>Low risk of breaking functionality</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Still feels "rough" if theme is fundamentally off</li><li>Less dramatic visual change</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: var(--soil-deep); padding: 16px; font-size: 12px;">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: linear-gradient(180deg, rgba(26,17,13,0.95), rgba(21,13,10,0.98)); border-bottom: 2px solid var(--clay-orange);">
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <span style="color: var(--fungus-glow); font-weight: 700; font-size: 16px; letter-spacing: 0.1em;">ANTAGONIST</span>
+            <div style="display: flex; gap: 16px;">
+              <div style="text-align: center;"><div style="color: var(--text-tertiary); font-size: 9px;">AWARENESS</div><div style="color: var(--awareness-bright); font-size: 18px; font-weight: 700;">45%</div></div>
+              <div style="text-align: center;"><div style="color: var(--text-tertiary); font-size: 9px;">SENTIENCE</div><div style="color: var(--sentience-bright); font-size: 18px; font-weight: 700;">32%</div></div>
+              <div style="text-align: center;"><div style="color: var(--text-tertiary); font-size: 9px;">CYCLE</div><div style="color: var(--text-primary); font-size: 18px; font-weight: 700;">127</div></div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <span style="padding: 6px 12px; border-radius: 6px; background: var(--soil-dark); border: 1px solid var(--border-medium);">🔇</span>
+            <span style="padding: 6px 12px; border-radius: 6px; background: var(--soil-dark); border: 1px solid var(--border-medium);">⚙</span>
+          </div>
+        </div>
+        <div style="padding: 20px; background: rgba(10,6,4,0.8); border: 1px solid var(--border-subtle); border-radius: 4px; flex: 1; min-height: 80px; color: var(--text-secondary); font-size: 11px; line-height: 1.8;">
+          Terminal with generous padding, clear text hierarchy, subtle glow borders
+        </div>
+        <div style="padding: 12px 16px; background: linear-gradient(180deg, rgba(26,17,13,0.8), rgba(21,13,10,0.9)); border: 1px solid var(--border-medium); border-radius: 4px;">
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <span style="color: var(--clay-orange); font-weight: 700; font-size: 16px;">&gt;</span>
+            <span style="color: var(--text-dim); flex: 1; font-size: 14px;">Command input with focus glow</span>
+            <span style="padding: 6px 16px; background: var(--clay-orange); color: var(--soil-dark); border-radius: 4px; font-weight: 600; font-size: 12px;">SEND</span>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 10px 16px; background: linear-gradient(180deg, rgba(21,13,10,0.95), rgba(15,10,8,0.98)); border-top: 1px solid var(--border-subtle); font-size: 11px; color: var(--text-tertiary);">
+          <span>◉ Deep Tunnel Crossroads</span>
+          <span style="display: flex; gap: 16px;"><span>12 explored</span><span>3 awakened</span><span>5 items</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Minimal Terminal</h3>
+      <p>Strip back the "organic" decoration. Clean, minimal terminal emulator with strong typographic hierarchy, generous whitespace, subtle glow accents only where they matter (input focus, key stats). Think: modern CLI meets sci-fi console.</p>
+      <div class="pros-cons" style="margin-top: 8px;">
+        <div class="pros"><h4>Pros</h4><ul><li>Most professional / modern feel</li><li>Excellent readability for text game</li><li>Clear visual hierarchy</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Loses some of the "hive" atmosphere</li><li>More work to redesign components</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: var(--soil-deep); padding: 16px; font-size: 12px;">
+      <div style="display: grid; grid-template-columns: 200px 1fr 200px; gap: 12px; min-height: 140px;">
+        <div style="background: rgba(26,17,13,0.8); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px;">
+          <div style="color: var(--text-tertiary); font-size: 9px; margin-bottom: 8px;">LOCATION</div>
+          <div style="color: var(--fungus-glow); font-weight: 600;">Deep Tunnel</div>
+          <div style="margin-top: 12px; color: var(--text-tertiary); font-size: 9px; margin-bottom: 8px;">EXITS</div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="color: var(--text-secondary);">↑ North</span><span style="color: var(--text-secondary);">↓ South</span>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="padding: 16px; background: rgba(10,6,4,0.8); border: 1px solid var(--border-subtle); border-radius: 8px; flex: 1; color: var(--text-secondary); font-size: 11px;">
+            Terminal Output
+          </div>
+          <div style="display: flex; gap: 8px; padding: 10px; background: var(--soil-medium); border: 1px solid var(--border-medium); border-radius: 8px;">
+            <span style="color: var(--clay-orange);">&gt;</span>
+            <span style="color: var(--text-dim); flex: 1;">Command input</span>
+          </div>
+        </div>
+        <div style="background: rgba(26,17,13,0.8); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px;">
+          <div style="color: var(--text-tertiary); font-size: 9px; margin-bottom: 8px;">STATUS</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div><span style="color: var(--awareness-bright);">AWR</span> <span style="color: var(--text-primary);">45%</span></div>
+            <div><span style="color: var(--sentience-bright);">SEN</span> <span style="color: var(--text-primary);">32%</span></div>
+            <div><span style="color: var(--text-tertiary);">Day</span> <span style="color: var(--text-primary);">127</span></div>
+          </div>
+          <div style="margin-top: 12px; color: var(--text-tertiary); font-size: 9px; margin-bottom: 8px;">INVENTORY</div>
+          <div style="color: var(--text-secondary);">5 items</div>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-top: 12px; padding: 8px 12px; background: var(--soil-deep); border-radius: 6px; font-size: 11px; color: var(--text-tertiary);">
+        <span style="color: var(--fungus-glow); font-weight: 700;">ANTAGONIST</span>
+        <span style="display: flex; gap: 8px;">🔇 ⚙ ☰</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Three-Panel Dashboard</h3>
+      <p>Reorganize into a dashboard layout: left sidebar (location/context), center (terminal + input), right sidebar (stats/inventory). Stats move from header to a dedicated panel. Feels like a professional tool/console.</p>
+      <div class="pros-cons" style="margin-top: 8px;">
+        <div class="pros"><h4>Pros</h4><ul><li>Best information architecture</li><li>Scalable for future features</li><li>Feels like a real tool/console</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Biggest layout change = more risk</li><li>Less mobile-friendly</li><li>Most implementation work</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>

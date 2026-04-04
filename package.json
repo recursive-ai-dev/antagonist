@@ -1,0 +1,62 @@
+{
+  "name": "antagonist",
+  "version": "0.9.0",
+  "type": "module",
+  "description": "A narrative-driven text adventure about consciousness, emergence, and what it means to become aware in a simulated world.",
+  "author": "Antagonist Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/recursive-ai-dev/antagonist.git"
+  },
+  "homepage": "https://github.com/recursive-ai-dev/antagonist",
+  "bugs": {
+    "url": "https://github.com/recursive-ai-dev/antagonist/issues"
+  },
+  "keywords": [
+    "text-adventure",
+    "narrative",
+    "interactive-fiction",
+    "consciousness",
+    "simulation",
+    "philosophical",
+    "indie-game"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "generate-audio": "node scripts/generateAudio.js"
+  },
+  "dependencies": {
+    "clsx": "2.1.1",
+    "framer-motion": "^12.38.0",
+    "lucide-react": "^1.7.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "tailwind-merge": "3.4.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.1.17",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^22.0.0",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "5.1.1",
+    "@vitest/ui": "^4.1.2",
+    "dotenv": "^17.3.1",
+    "happy-dom": "^20.8.9",
+    "jsdom": "^29.0.1",
+    "node-fetch": "^3.3.2",
+    "tailwindcss": "4.1.17",
+    "typescript": "5.9.3",
+    "vite": "7.2.4",
+    "vite-plugin-singlefile": "2.3.0",
+    "vitest": "^4.1.2"
+  }
+}

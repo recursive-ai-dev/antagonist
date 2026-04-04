@@ -1,0 +1,28 @@
+<h2>Design: Refined Consistency UI</h2>
+<p class="subtitle">Section 1 of 4 — Spacing &amp; Layout Grid</p>
+
+<div class="mockup">
+  <div class="mockup-header">8px Grid System</div>
+  <div class="mockup-body" style="font-family: monospace; font-size: 12px; padding: 20px;">
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <div style="padding: 12px 16px; background: rgba(160,104,56,0.1); border: 1px dashed var(--clay-orange); border-radius: 4px;">
+        <strong style="color: var(--clay-orange);">Header:</strong> padding 12px vertical, 16px horizontal | height 56px
+      </div>
+      <div style="padding: 16px; background: rgba(160,104,56,0.1); border: 1px dashed var(--clay-orange); border-radius: 4px;">
+        <strong style="color: var(--clay-orange);">Terminal:</strong> padding 16px | gap between lines 4px | margin-bottom 8px
+      </div>
+      <div style="padding: 12px 16px; background: rgba(160,104,56,0.1); border: 1px dashed var(--clay-orange); border-radius: 4px;">
+        <strong style="color: var(--clay-orange);">Command Input:</strong> padding 12px 16px | height 48px | margin-top 8px
+      </div>
+      <div style="padding: 8px 16px; background: rgba(160,104,56,0.1); border: 1px dashed var(--clay-orange); border-radius: 4px;">
+        <strong style="color: var(--clay-orange);">Footer:</strong> padding 8px 16px | height 40px
+      </div>
+    </div>
+    <p style="margin-top: 16px; color: var(--text-tertiary); font-size: 11px;">All spacing uses the existing CSS variable scale (--space-sm through --space-xl). No more arbitrary pixel values.</p>
+  </div>
+</div>
+
+<div class="pros-cons" style="margin-top: 16px;">
+  <div class="pros"><h4>What Changes</h4><ul><li>All padding/margin snap to 8px grid</li><li>Fixed component heights (header 56px, footer 40px, input 48px)</li><li>Consistent gap spacing: 8px between sections, 16px between major areas</li></ul></div>
+  <div class="cons"><h4>What Stays</h4><ul><li>Overall layout structure (header → terminal → input → footer)</li><li>Mycelial background canvas</li><li>Game state display collapsibles</li></ul></div>
+</div>

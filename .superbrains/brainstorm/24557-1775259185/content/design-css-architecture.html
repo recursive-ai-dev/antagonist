@@ -1,0 +1,75 @@
+<h2>Design: CSS Architecture &amp; Puter.js Integration</h2>
+<p class="subtitle">Section 4 of 4 — Cleanup, performance, texture generation</p>
+
+<div class="section">
+  <h3>CSS File Restructure</h3>
+  <p class="subtitle">Clean separation of concerns</p>
+  
+  <div class="mockup">
+    <div class="mockup-header">File changes</div>
+    <div class="mockup-body" style="padding: 16px; font-size: 12px;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="border-bottom: 1px solid var(--border-medium);">
+            <th style="text-align: left; padding: 8px; color: var(--text-tertiary); font-size: 9px; letter-spacing: 0.1em;">FILE</th>
+            <th style="text-align: left; padding: 8px; color: var(--text-tertiary); font-size: 9px; letter-spacing: 0.1em;">ACTION</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--border-subtle);">
+            <td style="padding: 8px; font-family: monospace; font-size: 11px;">game.css :root</td>
+            <td style="padding: 8px; color: var(--success); font-size: 11px;">SINGLE source of truth for all colors. Remove duplicates from design-tokens.css.</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border-subtle);">
+            <td style="padding: 8px; font-family: monospace; font-size: 11px;">design-tokens.css</td>
+            <td style="padding: 8px; color: var(--success); font-size: 11px;">Keep spacing, typography, motion, elevation, z-index tokens. REMOVE color definitions.</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border-subtle);">
+            <td style="padding: 8px; font-family: monospace; font-size: 11px;">hive-ui.css</td>
+            <td style="padding: 8px; color: var(--warning); font-size: 11px;">Simplify. Remove redundant gradients. Keep only organic animations (mycelial, glitch, breathing).</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border-subtle);">
+            <td style="padding: 8px; font-family: monospace; font-size: 11px;">GameLayout.tsx</td>
+            <td style="padding: 8px; color: var(--error); font-size: 11px;">DELETE — dead code, not used anywhere.</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border-subtle);">
+            <td style="padding: 8px; font-family: monospace; font-size: 11px;">TerminalOutput.tsx</td>
+            <td style="padding: 8px; color: var(--error); font-size: 11px;">Remove duplicate cn() definition. Import from @/utils/cn.</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border-subtle);">
+            <td style="padding: 8px; font-family: monospace; font-size: 11px;">All JSX files</td>
+            <td style="padding: 8px; color: var(--success); font-size: 11px;">Replace inline styles with Tailwind + CSS vars. Consistent border-radius (var(--radius-md)).</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-family: monospace; font-size: 11px;">New: textures/</td>
+            <td style="padding: 8px; color: var(--success); font-size: 11px;">Directory for Puter.js-generated transparent texture PNGs.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px;">
+  <h3>Puter.js Texture Generation</h3>
+  <p class="subtitle">Build-time procedural textures</p>
+  
+  <div class="mockup">
+    <div class="mockup-header">How it works</div>
+    <div class="mockup-body" style="padding: 16px; font-size: 12px;">
+      <ol style="padding-left: 20px; color: var(--text-secondary); line-height: 2;">
+        <li>Build script uses <code style="color: var(--clay-orange);">puter.js</code> canvas API to generate 256×256 transparent PNG textures</li>
+        <li>Textures: <strong>panel-grain.png</strong> (subtle noise), <strong>spore-dust.png</strong> (scattered dots), <strong>mycelial-noise.png</strong> (organic pattern)</li>
+        <li>Output to <code style="color: var(--clay-orange);">public/textures/</code> directory</li>
+        <li>CSS references them: <code style="color: var(--clay-orange);">background-image: url('/textures/panel-grain.png');</code></li>
+        <li>Opacity controlled in CSS (0.03–0.08) so they're subtle depth layers, not dominant</li>
+        <li>Run via <code style="color: var(--clay-orange);">npm run textures</code> before build, or as pre-build hook</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="pros-cons" style="margin-top: 16px;">
+  <div class="pros"><h4>Benefits</h4><ul><li>Real texture > CSS gradients for depth</li><li>Generated, not hand-crafted — easy to tweak</li><li>Tiny files (256×256 PNGs, <5KB each)</li><li>No runtime cost — just background-image</li></ul></div>
+  <div class="cons"><h4>Risks</h4><ul><li>Puter.js availability — needs npm install</li><li>One-time build script to write</li><li>Textures won't animate (static overlays)</li></ul></div>
+</div>

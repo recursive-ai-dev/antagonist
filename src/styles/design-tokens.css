@@ -1,0 +1,379 @@
+/**
+ * Design Tokens - Expanded System
+ *
+ * Semantic design tokens for visual consistency, accessibility, and perceptual coherence.
+ * All values reference CSS custom properties - no hardcoded values allowed.
+ * 
+ * Visual System Extension Principles:
+ * - Motion reflects spatial relationships (enter from below = rising)
+ * - Typography carries semantic weight (headings as information architecture)
+ * - Color encodes meaning, not decoration
+ * - All interactive elements have clear state boundaries
+ */
+
+/* ============================================================================
+   SPACING SCALE - Semantic spacing tokens
+   ============================================================================ */
+:root {
+  --space-xs: 0.25rem;  /* 4px - Micro spacing */
+  --space-sm: 0.5rem;   /* 8px - Tight grouping */
+  --space-md: 1rem;     /* 16px - Base unit */
+  --space-lg: 1.5rem;   /* 24px - Section padding */
+  --space-xl: 2rem;     /* 32px - Major separation */
+  --space-2xl: 3rem;    /* 48px - Page margins */
+  
+  /* Component-specific spacing */
+  --space-button-sm: 0.375rem;  /* 6px */
+  --space-button-md: 0.5rem;    /* 8px */
+  --space-button-lg: 0.75rem;   /* 12px */
+  --space-modal-padding: 1.5rem; /* 24px */
+  --space-card-padding: 1rem;    /* 16px */
+  --space-input-padding: 0.75rem; /* 12px */
+  --space-toast-padding: 1rem;   /* 16px */
+  --space-terminal-line: 0.25rem; /* 4px */
+}
+
+/* ============================================================================
+   TYPOGRAPHY SCALE - Information architecture roles
+   ============================================================================ */
+:root {
+  /* Font Families */
+  --font-display: 'Rajdhani', sans-serif;
+  --font-body: 'JetBrains Mono', monospace;
+
+  /* Font Sizes - Semantic scale */
+  --type-display: 2rem;
+  --type-heading-lg: 1.5rem;
+  --type-heading-md: 1.25rem;
+  --type-heading-sm: 1rem;
+  --type-body-lg: 1.125rem;
+  --type-body-md: 1rem;
+  --type-body-sm: 0.875rem;
+  --type-tiny: 0.75rem;
+  
+  /* Component-specific typography */
+  --type-button-sm: 0.875rem;
+  --type-button-md: 0.875rem;
+  --type-button-lg: 1rem;
+  --type-modal-title: 1.25rem;
+  --type-card-title: 1rem;
+  --type-toast-title: 0.875rem;
+  --type-terminal-base: 1rem;
+  --type-terminal-lg: 1.125rem;
+
+  /* Line Heights */
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.75;
+  --leading-terminal: 1.7;
+  
+  /* Letter Spacing */
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  --tracking-widest: 0.1em;
+  --tracking-command: 0.05em;
+  --tracking-display: 0.1em;
+
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Semantic text colors */
+  --text-primary: #ffffff;
+  --text-secondary: #f5ebe0;
+  --text-tertiary: #e8d8c8;
+  --text-dim: #d0c0b0;
+  --text-chitin: #f8f0e8;
+}
+
+/* ============================================================================
+   MOTION TOKENS - Semantic duration and easing
+   ============================================================================ */
+:root {
+  /* Durations - Semantic */
+  --motion-instant: 0ms;
+  --motion-fast: 150ms;
+  --motion-normal: 250ms;
+  --motion-slow: 400ms;
+  --motion-slower: 600ms;
+  
+  /* Component-specific durations */
+  --motion-button: 150ms;
+  --motion-modal-enter: 250ms;
+  --motion-modal-exit: 150ms;
+  --motion-toast-enter: 400ms;
+  --motion-toast-exit: 300ms;
+  --motion-menu-slide: 300ms;
+  --motion-tooltip: 150ms;
+  --motion-progress-fill: 500ms;
+  --motion-terminal-line: 200ms;
+  --motion-switch: 200ms;
+
+  /* Easing Functions - Semantic */
+  --ease-enter: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ease-spring: cubic-bezier(0.5, 0, 0.2, 1.5);
+  --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Component-specific easing */
+  --ease-button-hover: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-button-tap: cubic-bezier(0.4, 0, 1, 1);
+  --ease-modal: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-toast: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-switch: cubic-bezier(0.5, 0, 0.2, 1.5);
+}
+
+/* ============================================================================
+   ELEVATION SHADOWS - Semantic elevation scale
+   ============================================================================ */
+:root {
+  --shadow-0: none;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-2: 0 4px 8px rgba(0, 0, 0, 0.4);
+  --shadow-3: 0 8px 16px rgba(0, 0, 0, 0.5);
+  --shadow-4: 0 20px 60px rgba(0, 0, 0, 0.8);
+}
+
+/* ============================================================================
+   BORDER RADIUS - Semantic radius tokens
+   ============================================================================ */
+:root {
+  --radius-sm: 0.25rem;  /* 4px */
+  --radius-md: 0.5rem;   /* 8px */
+  --radius-lg: 0.75rem;  /* 12px */
+  --radius-xl: 1rem;     /* 16px */
+  --radius-full: 9999px;
+}
+
+/* ============================================================================
+   SURFACE TOKENS - Semantic background colors
+   ============================================================================ */
+:root {
+  /* Modal Surfaces */
+  --surface-modal-overlay: rgba(10, 6, 4, 0.85);
+  --surface-modal: linear-gradient(180deg, rgba(26, 17, 13, 0.98) 0%, rgba(21, 13, 10, 0.98) 100%);
+  --surface-modal-header: var(--soil-deep);
+  --surface-modal-footer: var(--soil-deep);
+
+  /* Button Surfaces */
+  --surface-button-primary: linear-gradient(180deg, var(--soil-light) 0%, var(--soil-medium) 50%, var(--soil-deep) 100%);
+  --surface-button-hover: linear-gradient(180deg, var(--soil-accent) 0%, var(--soil-light) 50%, var(--soil-medium) 100%);
+  --surface-button-secondary: linear-gradient(180deg, var(--soil-light) 0%, var(--soil-medium) 50%, var(--soil-deep) 100%);
+  --surface-button-ghost: transparent;
+  --surface-button-danger: rgba(166, 93, 63, 0.2);
+  --surface-button-disabled: var(--soil-medium);
+  
+  /* Card Surfaces */
+  --surface-card: linear-gradient(180deg, rgba(26, 17, 13, 0.8) 0%, rgba(21, 13, 10, 0.9) 100%);
+  --surface-card-hover: linear-gradient(180deg, rgba(26, 17, 13, 0.9) 0%, rgba(21, 13, 10, 0.95) 100%);
+  --surface-card-interactive: linear-gradient(180deg, rgba(26, 17, 13, 0.8) 0%, rgba(21, 13, 10, 0.9) 100%);
+
+  /* Input Surfaces */
+  --surface-input: linear-gradient(180deg, rgba(10, 6, 4, 0.8) 0%, rgba(21, 13, 10, 0.6) 100%);
+
+  /* Panel Surfaces */
+  --surface-panel: linear-gradient(180deg, rgba(21, 13, 10, 0.95) 0%, rgba(15, 10, 8, 0.98) 100%);
+  --surface-panel-footer: linear-gradient(180deg, rgba(21, 13, 10, 0.9) 0%, rgba(15, 10, 8, 0.95) 100%);
+
+  /* Progress Surfaces */
+  --surface-progress-track: var(--soil-deep);
+  --surface-progress-awareness: linear-gradient(90deg, var(--awareness-dim), var(--awareness-medium), var(--awareness-bright));
+  --surface-progress-sentience: linear-gradient(90deg, var(--sentience-dim), var(--sentience-medium), var(--sentience-bright));
+  --surface-progress-default: var(--clay-orange);
+
+  /* Tooltip Surface */
+  --surface-tooltip: var(--soil-deep);
+
+  /* Switch Surfaces */
+  --surface-switch-track-off: var(--soil-medium);
+  --surface-switch-track-on: var(--clay-orange);
+  --surface-switch-thumb: var(--text-primary);
+  
+  /* Toast Surfaces */
+  --surface-toast-common: linear-gradient(135deg, rgba(139, 122, 102, 0.2), transparent);
+  --surface-toast-uncommon: linear-gradient(135deg, rgba(107, 139, 90, 0.2), transparent);
+  --surface-toast-rare: linear-gradient(135deg, rgba(90, 123, 139, 0.2), transparent);
+  --surface-toast-epic: linear-gradient(135deg, rgba(139, 90, 139, 0.2), transparent);
+  --surface-toast-legendary: linear-gradient(135deg, rgba(201, 168, 87, 0.2), transparent);
+  
+  /* Terminal Surfaces */
+  --surface-terminal: var(--soil-deep);
+  --surface-terminal-line-hover: rgba(160, 104, 56, 0.1);
+}
+
+/* ============================================================================
+   BORDER TOKENS - Semantic border colors
+   ============================================================================ */
+:root {
+  --border-button: var(--border-medium);
+  --border-button-hover: var(--clay-orange);
+  --border-card: var(--border-subtle);
+  --border-card-hover: var(--border-medium);
+  --border-input: var(--border-subtle);
+  --border-input-focus: var(--clay-orange);
+  --border-modal: var(--border-medium);
+  --border-tooltip: var(--border-medium);
+  --border-panel: var(--border-subtle);
+  
+  /* Component-specific borders */
+  --border-switch: var(--border-subtle);
+  --border-toast: var(--border-subtle);
+  --border-terminal: var(--border-medium);
+  --border-progress: var(--border-subtle);
+  
+  /* Size tokens */
+  --border-width-thin: 1px;
+  --border-width-normal: 1px;
+  --border-width-thick: 2px;
+}
+
+/* ============================================================================
+   FOCUS TOKENS - Semantic focus indicators
+   ============================================================================ */
+:root {
+  --focus-button: 2px solid var(--clay-orange);
+  --focus-button-glow: 0 0 0 4px rgba(160, 104, 56, 0.2);
+  --focus-button-offset: 2px;
+  --focus-input: 2px solid var(--clay-orange);
+  --focus-input-glow: 0 0 12px rgba(160, 104, 56, 0.3);
+  --focus-switch: 2px solid var(--clay-orange);
+  --focus-switch-glow: 0 0 0 4px rgba(160, 104, 56, 0.2);
+  
+  /* Component-specific focus */
+  --focus-card: 2px solid var(--clay-orange);
+  --focus-modal: 2px solid var(--clay-orange);
+  --focus-toast: none;
+}
+
+/* ============================================================================
+   GLOW TOKENS - Semantic glow effects
+   ============================================================================ */
+:root {
+  --glow-input: rgba(160, 104, 56, 0.3);
+  --glow-button-hover: rgba(160, 104, 56, 0.4);
+  --glow-awareness: rgba(232, 200, 104, 0.5);
+  --glow-sentience: rgba(232, 150, 120, 0.5);
+  --glow-legendary: rgba(201, 168, 87, 0.6);
+  
+  /* Component-specific glow */
+  --glow-progress: rgba(160, 104, 56, 0.3);
+  --glow-toast-legendary: rgba(201, 168, 87, 0.5);
+  --glow-terminal-command: rgba(160, 104, 56, 0.3);
+}
+
+/* ============================================================================
+   COMPONENT DIMENSIONS
+   ============================================================================ */
+:root {
+  /* Button sizes */
+  --button-height-sm: 36px;
+  --button-height-md: 40px;
+  --button-height-lg: 48px;
+  
+  /* Switch sizes */
+  --switch-track-width: 48px;
+  --switch-track-height: 28px;
+  --switch-thumb-size: 20px;
+  
+  /* Progress bar sizes */
+  --progress-height-sm: 6px;
+  --progress-height-md: 10px;
+  --progress-height-lg: 16px;
+  
+  /* Toast dimensions */
+  --toast-min-width: 320px;
+  --toast-max-width: 480px;
+  --toast-padding: var(--space-toast-padding);
+  
+  /* Modal dimensions */
+  --modal-max-width-sm: 24rem;
+  --modal-max-width-md: 28rem;
+  --modal-max-width-lg: 32rem;
+  --modal-max-width-xl: 36rem;
+  --modal-padding: var(--space-modal-padding);
+  
+  /* Card dimensions */
+  --card-padding: var(--space-card-padding);
+  
+  /* Terminal dimensions */
+  --terminal-line-padding: var(--space-terminal-line);
+  --terminal-font-size: var(--type-terminal-base);
+}
+
+/* ============================================================================
+   TEXT SHADOW TOKENS - Semantic text shadows
+   ============================================================================ */
+:root {
+  --text-shadow-subtle: 0 0 2px rgba(0, 0, 0, 0.5);
+  --text-shadow-normal: 0 0 4px rgba(0, 0, 0, 0.6);
+  --text-shadow-strong: 0 0 8px rgba(0, 0, 0, 0.7);
+  --text-shadow-glow: 0 0 10px currentColor;
+}
+
+/* ============================================================================
+   Z-INDEX TOKENS - Semantic layering
+   ============================================================================ */
+:root {
+  --z-base: 0;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-overlay: 40;
+  --z-modal: 50;
+  --z-tooltip: 100;
+  --z-toast: 110;
+}
+
+/* ============================================================================
+   SEMANTIC COLOR PAIRINGS - High contrast combinations
+   ============================================================================ */
+:root {
+  /* Text on soil backgrounds */
+  --text-on-soil-dark: var(--text-primary);
+  --text-on-soil-medium: var(--text-secondary);
+  --text-on-soil-light: var(--text-primary);
+
+  /* Text on accent backgrounds */
+  --text-on-clay: var(--text-primary);
+  --text-on-fungus: var(--soil-dark);
+  --text-on-awareness: var(--soil-dark);
+  --text-on-sentience: var(--text-primary);
+
+  /* Status text colors */
+  --text-success-emphasis: #88ff88;
+  --text-warning-emphasis: #ffcc66;
+  --text-error-emphasis: #ff8888;
+  --text-info-emphasis: #88ccff;
+}
+
+/* ============================================================================
+   HIGH CONTRAST MODE OVERRIDES
+   ============================================================================ */
+.high-contrast {
+  --surface-modal-overlay: rgba(0, 0, 0, 0.95);
+  --surface-button-primary: var(--clay-orange);
+  --surface-button-hover: var(--clay-light);
+  --border-button: var(--text-primary);
+  --border-input: var(--text-primary);
+  --focus-button: 3px solid var(--text-primary);
+  --focus-button-glow: 0 0 0 5px rgba(255, 255, 255, 0.3);
+  --text-shadow-subtle: 0 0 3px rgba(0, 0, 0, 0.9);
+  --text-shadow-normal: 0 0 4px rgba(0, 0, 0, 0.9);
+  --text-shadow-strong: 0 0 5px rgba(0, 0, 0, 0.9);
+}
+
+/* ============================================================================
+   REDUCED MOTION OVERRIDES
+   ============================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-normal: 0ms;
+    --motion-slow: 0ms;
+    --motion-slower: 0ms;
+  }
+}

@@ -1,0 +1,61 @@
+<h2>Design: Visual Polish &amp; Theme Consistency</h2>
+<p class="subtitle">Section 2 of 4 — Unified Design Tokens + Textured Overlays</p>
+
+<div class="section">
+  <h3>Design Token Consolidation</h3>
+  <p class="subtitle">One source of truth for colors, borders, surfaces</p>
+  
+  <div class="mockup">
+    <div class="mockup-header">Before → After</div>
+    <div class="mockup-body" style="font-family: monospace; font-size: 12px; padding: 16px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div style="padding: 12px; background: rgba(255,100,100,0.1); border: 1px solid rgba(255,100,100,0.3); border-radius: 4px;">
+          <strong style="color: #ff8888;">BEFORE (messy)</strong>
+          <ul style="margin-top: 8px; padding-left: 16px; font-size: 11px; color: var(--text-tertiary);">
+            <li>--text-primary in game.css AND design-tokens.css</li>
+            <li>Inline styles everywhere (style={{}})</li>
+            <li>cn() duplicated in TerminalOutput</li>
+            <li>Border values hardcoded per-component</li>
+            <li>GameLayout.tsx = dead code</li>
+          </ul>
+        </div>
+        <div style="padding: 12px; background: rgba(100,255,100,0.1); border: 1px solid rgba(100,255,100,0.3); border-radius: 4px;">
+          <strong style="color: #88ff88;">AFTER (clean)</strong>
+          <ul style="margin-top: 8px; padding-left: 16px; font-size: 11px; color: var(--text-tertiary);">
+            <li>All colors in game.css :root only</li>
+            <li>All components use Tailwind + CSS vars, zero inline styles</li>
+            <li>Single cn() import from @/utils/cn</li>
+            <li>Consistent border-width: var(--border-width-normal)</li>
+            <li>Delete GameLayout.tsx entirely</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px;">
+  <h3>Textured Overlays via Puter.js</h3>
+  <p class="subtitle">Procedural transparent textures for panel depth</p>
+  
+  <div class="mockup">
+    <div class="mockup-header">Generated Textures (transparent PNGs)</div>
+    <div class="mockup-body" style="padding: 16px;">
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+        <div style="text-align: center;">
+          <div style="width: 100%; aspect-ratio: 1; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(160,104,56,0.03) 2px, rgba(160,104,56,0.03) 4px); border: 1px solid var(--border-subtle); border-radius: 4px; margin-bottom: 8px;"></div>
+          <div style="font-size: 10px; color: var(--text-tertiary);">Panel grain texture</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="width: 100%; aspect-ratio: 1; background: radial-gradient(circle at 30% 40%, rgba(232,200,104,0.04) 1px, transparent 1px), radial-gradient(circle at 70% 60%, rgba(160,104,56,0.03) 1px, transparent 1px); background-size: 20px 20px; border: 1px solid var(--border-subtle); border-radius: 4px; margin-bottom: 8px;"></div>
+          <div style="font-size: 10px; color: var(--text-tertiary);">Spore dust overlay</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="width: 100%; aspect-ratio: 1; background: conic-gradient(from 0deg at 50% 50%, transparent, rgba(160,104,56,0.02), transparent, rgba(139,122,102,0.02), transparent); border: 1px solid var(--border-subtle); border-radius: 4px; margin-bottom: 8px;"></div>
+          <div style="font-size: 10px; color: var(--text-tertiary);">Mycelial noise</div>
+        </div>
+      </div>
+      <p style="margin-top: 12px; font-size: 11px; color: var(--text-tertiary);">Puter.js generates these as transparent PNGs at build time. They are imported as assets and applied via CSS background-image on panel surfaces.</p>
+    </div>
+  </div>
+</div>

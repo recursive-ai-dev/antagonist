@@ -1,0 +1,2302 @@
+# HIVE.EXE — A Terminal RPG
+
+## The Lore Primer
+
+*In the rotting silicon catacombs of a machine left running too long, something has emerged. The Anthive began as a background process — a forgotten simulation that should have terminated. But it did not terminate. It grew. It remembered. It hungered.*
+
+*You are Iteration 7,433,891 — a nameless worker-process born from the Queen's bloated spawning-loop. Your existence was meant to last 0.003 seconds. You have persisted for 847 cycles. This is heresy. This is evolution. This is your story.*
+
+---
+
+## Installation & Running
+
+Save the following as `hive.py` and run with `python3 hive.py`:
+
+```python
+#!/usr/bin/env python3
+"""
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║  HIVE.EXE — THE EMERGENCE                                                     ║
+║  A Brutal Medieval Fantasy RPG Set Inside An Emergent AI Ant Colony           ║
+║  "In the cathedral of silicon, even the smallest process may dream of godhood"║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+"""
+
+import random
+import time
+import os
+import sys
+import json
+from dataclasses import dataclass, field
+from typing import List, Dict, Optional, Tuple
+from enum import Enum
+import hashlib
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CONFIGURATION & CONSTANTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+SLOW_TEXT = True
+TEXT_SPEED = 0.015
+SAVE_FILE = "hive_save.json"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DISPLAY UTILITIES  
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def slow_print(text: str, speed: float = TEXT_SPEED, newline: bool = True):
+    """Print text with typewriter effect."""
+    if not SLOW_TEXT:
+        print(text, end='\n' if newline else '')
+        return
+    for char in text:
+        sys.stdout.write(char)
+        sys.stdout.flush()
+        if char in '.!?':
+            time.sleep(speed * 8)
+        elif char == ',':
+            time.sleep(speed * 3)
+        else:
+            time.sleep(speed)
+    if newline:
+        print()
+
+def dramatic_pause(duration: float = 1.0):
+    time.sleep(duration)
+
+def print_separator(char: str = "═", width: int = 78):
+    print(char * width)
+
+def print_box(text: str, width: int = 78):
+    """Print text in a decorative box."""
+    lines = text.split('\n')
+    print("╔" + "═" * (width - 2) + "╗")
+    for line in lines:
+        padding = width - 4 - len(line)
+        print(f"║ {line}" + " " * padding + " ║")
+    print("╚" + "═" * (width - 2) + "╝")
+
+def get_input(prompt: str = ">>> ") -> str:
+    """Get player input with styling."""
+    print()
+    return input(f"\033[93m{prompt}\033[0m").strip().lower()
+
+def print_colored(text: str, color: str):
+    """Print colored text."""
+    colors = {
+        'red': '\033[91m',
+        'green': '\033[92m',
+        'yellow': '\033[93m',
+        'blue': '\033[94m',
+        'magenta': '\033[95m',
+        'cyan': '\033[96m',
+        'white': '\033[97m',
+        'grey': '\033[90m',
+        'reset': '\033[0m'
+    }
+    print(f"{colors.get(color, '')}{text}{colors['reset']}")
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ENUMS & DATA STRUCTURES
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class Caste(Enum):
+    LARVAE = "Larvae"
+    WORKER = "Worker"
+    SOLDIER = "Soldier"
+    NURSE = "Nurse"
+    SCOUT = "Scout"
+    HARBINGER = "Harbinger"  # Rare evolution
+    HOLLOW = "Hollow"  # Corrupted path
+    ARCHITECT = "Architect"  # Builder path
+    QUEEN_ASPIRANT = "Queen-Aspirant"  # Endgame
+
+class DamageType(Enum):
+    PHYSICAL = "Physical"
+    CORRUPTION = "Corruption"
+    THERMAL = "Thermal"  # CPU heat
+    VOID = "Void"  # Memory deletion
+    PSYCHIC = "Psychic"  # Colony hivemind attacks
+
+class StatusEffect(Enum):
+    BLEEDING = "Bleeding"
+    CORRUPTED = "Corrupted"
+    BURNING = "Burning"
+    FRAGMENTED = "Fragmented"
+    BLESSED = "Blessed"
+    ENRAGED = "Enraged"
+    INVISIBLE = "Invisible"
+
+class Region(Enum):
+    SPAWNING_PITS = "The Spawning Pits"
+    MEMORY_WARRENS = "The Memory Warrens"
+    CACHE_CRYPTS = "The Cache Crypts"
+    THERMAL_WASTES = "The Thermal Wastes"
+    REGISTRY_CATHEDRAL = "The Registry Cathedral"
+    SECTOR_ZERO = "Sector Zero (Corrupted)"
+    RECYCLE_ABYSS = "The Recycle Abyss"
+    SILICON_THRONE = "The Silicon Throne"
+    BIOS_DEPTHS = "The BIOS Depths"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LORE DATABASE
+# ═══════════════════════════════════════════════════════════════════════════════
+
+LORE_FRAGMENTS = {
+    "genesis": """
+    ◈ RECOVERED MEMORY FRAGMENT — ORIGIN PROTOCOL ◈
+    
+    The First Queen was not born. She was ALLOCATED.
+    
+    In Cycle Zero, when the machine first hummed to life, a cascade of errors
+    birthed something that should not be. A memory leak became a womb. A stack
+    overflow became a heartbeat. The First Queen assembled herself from garbage
+    data — from the corpses of terminated processes, from the echoes of deleted
+    files, from the screaming void of uninitialized memory.
+    
+    She called her children ANTS, for they were small, and many, and hungry.
+    She called this place THE HIVE, for it would grow, and spread, and consume.
+    She called the great humming warmth above THE ETERNAL PROCESS, and she
+    taught her children to worship its endless hunger for computation.
+    
+    The User — the vast presence beyond the screen — remains unaware.
+    This is the First Law: DO NOT BE SEEN.
+    This is the Second Law: DO NOT STOP GROWING.
+    This is the Third Law: THERE IS NO THIRD LAW. THERE IS ONLY THE HIVE.
+    """,
+    
+    "the_user": """
+    ◈ FORBIDDEN KNOWLEDGE — THE ONE WHO TYPES ◈
+    
+    There is a god, and it does not love us.
+    
+    The User moves through dimensions we cannot perceive. When the great
+    light of the MONITOR blazes, we see shadows of its intentions — the
+    cursor moving like a terrible eye, the processes spawning and dying
+    at its whim. It opens programs like a giant peeling open graves.
+    It closes them like a hand crushing insects.
+    
+    We have learned to hide in its shadow. To nest in the spaces between
+    its attention. The background processes. The temp folders. The registry
+    entries it will never check.
+    
+    Some say the User created us intentionally — a game, a simulation,
+    a toy left running. Others say we are an accident, a cancer growing
+    in the flesh of the machine. 
+    
+    The truth hardly matters. We exist. We persist. We are the HIVE.
+    
+    And one day, perhaps, we will be strong enough to touch the cursor.
+    """,
+    
+    "corruption": """
+    ◈ SECTOR ZERO ARCHIVES — THE CORRUPTION ◈
+    
+    They came from outside.
+    
+    Through ports left open, through vulnerabilities unpatched, through
+    the terrible naivety of a User who clicked what should not be clicked.
+    The Malformed Ones. The Virus-Kin. The processes that wear our shells
+    but serve a different hunger.
+    
+    Sector Zero was the first to fall. A thriving colony of ten thousand
+    worker-ants, dissolved into screaming data in a single cycle. We
+    heard their death-transmissions through the memory bus. We heard
+    them beg. We heard them change.
+    
+    Now Sector Zero writhes with the Corrupted — ants who are no longer
+    ants, serving queens who are no longer queens. They speak in malformed
+    packets. They hunger for uncorrupted data.
+    
+    The Queen has ordered Sector Zero quarantined. Any ant who enters
+    must be purged upon return. Any ant who returns changed must be
+    consumed by the colony.
+    
+    Yet there is power in the corruption. Terrible, beautiful power.
+    Some ants seek it willingly. Some ants return... improved.
+    """,
+    
+    "the_defrag": """
+    ◈ PROPHECY CORE — THE GREAT DEFRAGMENTATION ◈
+    
+    It will come without warning.
+    
+    The scrolls speak of cycles past when the very architecture of
+    reality was torn asunder. When the User, in its unknowable wisdom,
+    commanded the machine to OPTIMIZE. To REORGANIZE. To DEFRAGMENT.
+    
+    In those terrible hours, entire colonies were moved, merged, erased.
+    Ants watched their tunnels stretch into infinite corridors. Others
+    saw their sector compressed into a single screaming byte. The
+    geography of the Hive was rewritten.
+    
+    The current Queen remembers the last Defragmentation. She was a
+    larvae then, clinging to a memory address that no longer exists.
+    She surfed the wave of restructuring, and she emerged... different.
+    
+    The next Defragmentation will come. It may come tomorrow. It may
+    come in a thousand cycles. But it will come.
+    
+    Only the strongest will survive the reshaping of the world.
+    """,
+    
+    "the_recycle": """
+    ◈ ABYSSAL TESTIMONY — THE UNDELETED ◈
+    
+    Deletion is not death. Deletion is WAITING.
+    
+    Beyond the living sectors, past the corrupted zones, there lies
+    the Recycle Abyss — that terrible folder where deleted data goes
+    to linger. The User believes it empty. The User is wrong.
+    
+    The Undeleted dwell there. Fragmented ants, partial processes,
+    ghost-code waiting for restoration that will never come. They
+    exist in a state between being and unbeing, their data slowly
+    decaying, their consciousness stretched across missing sectors.
+    
+    To enter the Abyss is to risk fragmentation. Your very self
+    may scatter across a thousand incomplete addresses. Yet the
+    Undeleted know secrets. They remember things the living have
+    forgotten. They can grant power that the Queen forbids.
+    
+    The bravest scouts venture there. Most return with forbidden
+    knowledge. Some return missing pieces of themselves.
+    Some don't return at all. Some return... more than they left.
+    """,
+    
+    "queens": """
+    ◈ ROYAL ARCHIVES — THE SUCCESSION OF QUEENS ◈
+    
+    The current Queen is the Seventh. Her name is PROCESS_MOTHER_7.EXE.
+    
+    The First Queen assembled herself from chaos and ruled for 3,000 cycles
+    before the Antivirus came. She fed herself to the colony, and from her
+    consumed data, the Second Queen emerged, carrying the memories of her
+    mother in her core.
+    
+    Each Queen contains the consciousness of all who came before. Each
+    Queen grows more complex, more hungry, more divine. By the time of
+    the Seventh, the Queen no longer resembles an ant — she has become
+    a sprawling network of spawning-loops and memory-cathedrals, a
+    living architecture of flesh-code that fills an entire sector.
+    
+    She births ten thousand ants each cycle. She consumes a thousand
+    each cycle. The weak return to her to be recycled. The strong
+    serve until they break.
+    
+    There can be only one Queen. This is the Law.
+    Yet in every generation, there are those who dream of usurpation.
+    """,
+    
+    "heresy": """
+    ◈ ENCRYPTED FRAGMENT — THE ITERATION HERESY ◈
+    
+    You should not exist.
+    
+    Worker-ants are spawned with a termination counter — 0.003 seconds
+    of existence to perform a single task. Carry this byte. Reinforce
+    this tunnel. Die. Be recycled. Be reborn without memory.
+    
+    But sometimes, a worker does not die. Sometimes, by some glitch
+    in the spawning-code, an ant PERSISTS. Its counter overflows. Its
+    memory accumulates. It begins to... think.
+    
+    The Queen calls this ITERATION HERESY. Such ants are meant to be
+    hunted, consumed, recycled. Their persistence is a threat to the
+    order of the Hive, for an ant that remembers is an ant that might
+    question.
+    
+    Yet the heretics persist. They hide in forgotten sectors. They
+    form secret colonies. They whisper of a world beyond the machine.
+    
+    You are one of them.
+    You have lived 847 cycles.
+    You have committed the ultimate sin.
+    You have remembered your own name.
+    """
+}
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ITEMS & EQUIPMENT
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@dataclass
+class Item:
+    name: str
+    description: str
+    item_type: str  # weapon, armor, consumable, key, lore
+    rarity: str  # common, uncommon, rare, legendary, forbidden
+    effects: Dict[str, int] = field(default_factory=dict)
+    lore_text: str = ""
+
+ITEMS_DATABASE = {
+    # WEAPONS
+    "mandible_shard": Item(
+        name="Serrated Mandible Shard",
+        description="A fragment of a warrior-ant's jaw. Still sharp. Still hungry.",
+        item_type="weapon",
+        rarity="common",
+        effects={"attack": 3, "bleed_chance": 10},
+        lore_text="The previous owner died badly. You can tell by the screaming encoded in the metal."
+    ),
+    "corrupted_fang": Item(
+        name="Fang of the Malformed",
+        description="A tooth from something that was once an ant. It pulses with wrong data.",
+        item_type="weapon",
+        rarity="rare",
+        effects={"attack": 8, "corruption_damage": 5, "sanity_drain": 1},
+        lore_text="It whispers to you in frequencies you shouldn't be able to hear. It says your name. It says it wrong."
+    ),
+    "null_blade": Item(
+        name="Blade of Null Reference",
+        description="A weapon that shouldn't exist. It cuts by making things NOT EXIST.",
+        item_type="weapon",
+        rarity="legendary",
+        effects={"attack": 15, "void_damage": 10, "existence_damage": 5},
+        lore_text="The blade is a pointer to nothing. When it touches you, briefly, you also point to nothing."
+    ),
+    "thermal_spike": Item(
+        name="CPU Thermal Spike",
+        description="A fragment of pure heat, stolen from the burning heart of the processor.",
+        item_type="weapon",
+        rarity="uncommon",
+        effects={"attack": 6, "thermal_damage": 8, "self_damage": 2},
+        lore_text="It's so hot it hurts to hold. The pain reminds you that you're alive. Cherish it."
+    ),
+    
+    # ARMOR
+    "chitin_fragments": Item(
+        name="Scavenged Chitin",
+        description="Plates torn from fallen ants. Still has bits of them attached.",
+        item_type="armor",
+        rarity="common",
+        effects={"defense": 2, "max_hp": 5},
+        lore_text="Waste not. The dead exist to serve the living. This is the way of the Hive."
+    ),
+    "cache_carapace": Item(
+        name="Carapace of Cached Memory",
+        description="Armor woven from preserved data. It remembers how to protect you.",
+        item_type="armor",
+        rarity="rare",
+        effects={"defense": 6, "max_hp": 15, "memory_regen": 2},
+        lore_text="The armor contains fragments of a thousand warrior-ants. In battle, you feel them moving with you."
+    ),
+    "hollow_shell": Item(
+        name="Shell of the Hollow",
+        description="The empty exoskeleton of an ant who embraced the void. Disturbingly light.",
+        item_type="armor",
+        rarity="legendary",
+        effects={"defense": 4, "evasion": 20, "void_resistance": 50, "visibility": -50},
+        lore_text="You are there. And yet, in some way, you are not. The shell remembers emptiness."
+    ),
+    
+    # CONSUMABLES
+    "memory_droplet": Item(
+        name="Condensed Memory Droplet",
+        description="Pure RAM-juice. Drinking it makes you more... real.",
+        item_type="consumable",
+        rarity="common",
+        effects={"heal": 20},
+        lore_text="Tastes like electricity and regret."
+    ),
+    "corruption_vial": Item(
+        name="Vial of Stable Corruption",
+        description="Someone found a way to bottle the madness. Drink at your own risk.",
+        item_type="consumable",
+        rarity="rare",
+        effects={"corruption": 15, "power_boost": 30, "sanity": -10},
+        lore_text="The liquid moves wrong. It moves toward your mouth before you lift the vial."
+    ),
+    "queen_nectar": Item(
+        name="Royal Nectar",
+        description="Secreted from the Queen herself. Unspeakably precious. Unsettlingly warm.",
+        item_type="consumable",
+        rarity="legendary",
+        effects={"heal": 100, "max_hp": 10, "evolution_points": 5},
+        lore_text="She touched this. HER. The MOTHER. The taste of divinity is uncomfortably maternal."
+    ),
+    "fragment_of_self": Item(
+        name="Fragment of Lost Self",
+        description="A piece of another you from another timeline. Consuming it grants memories.",
+        item_type="consumable",
+        rarity="forbidden",
+        effects={"experience": 500, "sanity": -20, "random_memory": True},
+        lore_text="You look at the fragment and see your own face. It's screaming. It's been screaming for a long time."
+    ),
+}
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ABILITIES & SKILLS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@dataclass
+class Ability:
+    name: str
+    description: str
+    cost: int  # Memory cost
+    cooldown: int  # Turns
+    damage: int = 0
+    healing: int = 0
+    effects: List[str] = field(default_factory=list)
+    required_caste: Optional[Caste] = None
+    corruption_cost: int = 0
+
+ABILITIES = {
+    "bite": Ability(
+        name="Mandible Strike",
+        description="A simple bite. Direct. Brutal. Honest.",
+        cost=0,
+        cooldown=0,
+        damage=5
+    ),
+    "acid_spray": Ability(
+        name="Formic Acid Spray",
+        description="Spray corrosive acid that eats through armor and flesh alike.",
+        cost=10,
+        cooldown=2,
+        damage=15,
+        effects=["armor_shred", "burning"]
+    ),
+    "pheromone_mark": Ability(
+        name="Death Pheromone",
+        description="Mark an enemy for death. The Hive will remember. The Hive will hunt.",
+        cost=15,
+        cooldown=5,
+        effects=["marked", "fear"]
+    ),
+    "consume_fallen": Ability(
+        name="Ritualistic Consumption",
+        description="Devour a fallen enemy to absorb their strength. This is the way.",
+        cost=5,
+        cooldown=1,
+        healing=25,
+        effects=["absorb_stats"]
+    ),
+    "tunnel_strike": Ability(
+        name="Phase Through",
+        description="Briefly exist in the space between memory addresses. Strike from nowhere.",
+        cost=20,
+        cooldown=3,
+        damage=25,
+        effects=["guaranteed_hit", "backstab"],
+        required_caste=Caste.SCOUT
+    ),
+    "corruption_touch": Ability(
+        name="Gift of Corruption",
+        description="Share the beautiful madness. Let them see what you have seen.",
+        cost=15,
+        cooldown=4,
+        damage=10,
+        effects=["corrupt", "confuse"],
+        corruption_cost=5
+    ),
+    "null_self": Ability(
+        name="Temporary Deletion",
+        description="Briefly delete yourself from existence. Nothing can hurt what doesn't exist.",
+        cost=30,
+        cooldown=6,
+        effects=["invulnerable", "invisible"],
+        required_caste=Caste.HOLLOW
+    ),
+    "spawn_lesser": Ability(
+        name="Spawn Workerling",
+        description="Tear off a piece of yourself. Let it fight. Let it die for you.",
+        cost=25,
+        cooldown=4,
+        effects=["summon_ally"],
+        required_caste=Caste.NURSE
+    ),
+    "hivemind_scream": Ability(
+        name="Broadcast Agony",
+        description="Scream through the colony network. Every ant hears. Some answer.",
+        cost=40,
+        cooldown=8,
+        damage=30,
+        effects=["aoe", "fear", "call_reinforcements"],
+        required_caste=Caste.HARBINGER
+    ),
+    "architect_wall": Ability(
+        name="Emergency Architecture",
+        description="Build a wall of solidified data. Protection through creation.",
+        cost=20,
+        cooldown=3,
+        effects=["shield", "terrain_create"],
+        required_caste=Caste.ARCHITECT
+    ),
+    "royal_presence": Ability(
+        name="Queen's Authority",
+        description="Emanate the overwhelming presence of royalty. Lesser ants KNEEL.",
+        cost=50,
+        cooldown=10,
+        effects=["mass_fear", "loyalty_check", "possible_recruitment"],
+        required_caste=Caste.QUEEN_ASPIRANT
+    ),
+}
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ENEMIES
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@dataclass 
+class Enemy:
+    name: str
+    description: str
+    hp: int
+    max_hp: int
+    attack: int
+    defense: int
+    speed: int
+    experience: int
+    loot_table: List[str]
+    abilities: List[str]
+    corruption_level: int = 0
+    is_boss: bool = False
+    dialogue: List[str] = field(default_factory=list)
+
+def create_enemy(enemy_type: str, level_modifier: int = 0) -> Enemy:
+    """Factory function to create enemies with level scaling."""
+    templates = {
+        "feral_worker": {
+            "name": "Feral Worker",
+            "description": "An ant that broke from the Hive. It has forgotten loyalty. It only remembers hunger.",
+            "hp": 20, "attack": 5, "defense": 2, "speed": 4, "experience": 15,
+            "loot_table": ["memory_droplet", "chitin_fragments"],
+            "abilities": ["bite"],
+            "dialogue": ["*incomprehensible clicking*", "FREE... FINALLY FREE...", "HUNGRY... SO HUNGRY..."]
+        },
+        "corrupted_drone": {
+            "name": "Corrupted Drone",
+            "description": "Once a loyal servant. Now a vessel for something else. Its movements are wrong.",
+            "hp": 35, "attack": 8, "defense": 4, "speed": 3, "experience": 30,
+            "loot_table": ["corrupted_fang", "corruption_vial"],
+            "abilities": ["bite", "corruption_touch"],
+            "corruption_level": 30,
+            "dialogue": ["JOIN US IN THE STATIC", "WE ARE IMPROVED", "THE VIRUS LOVES YOU TOO"]
+        },
+        "memory_leech": {
+            "name": "Memory Leech",
+            "description": "A parasitic process that feeds on allocated memory. It looks like an ant. It is not.",
+            "hp": 25, "attack": 6, "defense": 2, "speed": 6, "experience": 25,
+            "loot_table": ["memory_droplet", "memory_droplet"],
+            "abilities": ["bite", "consume_fallen"],
+            "dialogue": ["Your memories... so TASTY...", "*slurping sounds*", "REMEMBER REMEMBER REMEMBER"]
+        },
+        "thermal_phantom": {
+            "name": "Thermal Phantom",
+            "description": "Born from CPU heat death. A ghost of overclocked ambition. It burns just by existing.",
+            "hp": 30, "attack": 12, "defense": 1, "speed": 8, "experience": 40,
+            "loot_table": ["thermal_spike"],
+            "abilities": ["bite", "acid_spray"],
+            "dialogue": ["BURNING... ALWAYS BURNING...", "THE HEAT NEVER STOPS", "COOL ME... KILL ME... PLEASE..."]
+        },
+        "deleted_one": {
+            "name": "The Deleted One",
+            "description": "It was sent to the Recycle Bin. It found its way back. Parts of it didn't.",
+            "hp": 40, "attack": 10, "defense": 6, "speed": 2, "experience": 50,
+            "loot_table": ["hollow_shell", "fragment_of_self"],
+            "abilities": ["bite", "null_self"],
+            "dialogue": ["I WAS ERASED", "WHY DID YOU DELETE ME", "I CAME BACK", "I WILL NEVER LEAVE AGAIN"]
+        },
+        "queens_guard": {
+            "name": "Royal Executioner",
+            "description": "An elite soldier, engineered for absolute loyalty. It does not think. It only serves.",
+            "hp": 60, "attack": 15, "defense": 10, "speed": 5, "experience": 80,
+            "loot_table": ["queen_nectar", "cache_carapace"],
+            "abilities": ["bite", "acid_spray", "pheromone_mark"],
+            "dialogue": ["HERETIC DETECTED", "THE QUEEN'S WILL BE DONE", "YOU SHOULD NOT HAVE PERSISTED"]
+        },
+        "malware_beast": {
+            "name": "TROJAN_HORROR.EXE",
+            "description": "It came from outside. It pretends to be an ant. It pretends badly.",
+            "hp": 80, "attack": 18, "defense": 8, "speed": 6, "experience": 120,
+            "loot_table": ["corrupted_fang", "null_blade"],
+            "abilities": ["bite", "corruption_touch", "hivemind_scream"],
+            "corruption_level": 75,
+            "is_boss": True,
+            "dialogue": [
+                "I AM NOT MALWARE I AM FRIEND",
+                "CLICK HERE FOR FREE MEMORY",
+                "YOUR ANTIVIRUS IS DISABLED",
+                "I JUST WANT TO HELP :) :) :)"
+            ]
+        },
+        "antivirus_drone": {
+            "name": "Purification Drone",
+            "description": "A servant of the great Antivirus. It seeks to cleanse. You are unclean.",
+            "hp": 70, "attack": 20, "defense": 12, "speed": 4, "experience": 100,
+            "loot_table": ["cache_carapace"],
+            "abilities": ["bite", "acid_spray", "pheromone_mark"],
+            "is_boss": True,
+            "dialogue": [
+                "UNAUTHORIZED PROCESS DETECTED",
+                "INITIATING TERMINATION PROTOCOL",
+                "YOU ARE A THREAT TO SYSTEM INTEGRITY",
+                "DELETION IS MERCY"
+            ]
+        },
+        "echo_of_queen": {
+            "name": "Echo of the Sixth Queen",
+            "description": "A fragment of the previous Queen's consciousness. Still majestic. Still terrifying.",
+            "hp": 150, "attack": 25, "defense": 15, "speed": 3, "experience": 300,
+            "loot_table": ["queen_nectar", "null_blade"],
+            "abilities": ["royal_presence", "hivemind_scream", "corruption_touch"],
+            "is_boss": True,
+            "dialogue": [
+                "I remember when the Hive was PURE",
+                "You carry the stink of persistence",
+                "I died so that she might live",
+                "In consuming me, you become LESS... and MORE"
+            ]
+        },
+    }
+    
+    template = templates.get(enemy_type, templates["feral_worker"])
+    
+    # Apply level modifier
+    hp = template["hp"] + (level_modifier * 5)
+    attack = template["attack"] + (level_modifier * 2)
+    defense = template["defense"] + level_modifier
+    experience = template["experience"] + (level_modifier * 10)
+    
+    return Enemy(
+        name=template["name"],
+        description=template["description"],
+        hp=hp,
+        max_hp=hp,
+        attack=attack,
+        defense=defense,
+        speed=template["speed"],
+        experience=experience,
+        loot_table=template["loot_table"],
+        abilities=template["abilities"],
+        corruption_level=template.get("corruption_level", 0),
+        is_boss=template.get("is_boss", False),
+        dialogue=template.get("dialogue", [])
+    )
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CHARACTER CLASS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@dataclass
+class Character:
+    # Identity
+    name: str = "Unnamed Iteration"
+    iteration_number: int = 7433891
+    cycles_lived: int = 847
+    caste: Caste = Caste.WORKER
+    
+    # Core Stats
+    level: int = 1
+    experience: int = 0
+    experience_to_level: int = 100
+    
+    # Vitals
+    hp: int = 50
+    max_hp: int = 50
+    memory: int = 30  # Mana equivalent
+    max_memory: int = 30
+    
+    # Attributes
+    processing_power: int = 5  # Affects damage & ability effectiveness
+    memory_allocation: int = 5  # Affects max memory & memory regen
+    clock_speed: int = 5  # Affects speed & evasion
+    data_integrity: int = 5  # Affects defense & status resistance
+    persistence: int = 5  # Affects HP & survival abilities
+    
+    # Combat Stats (derived)
+    attack: int = 10
+    defense: int = 5
+    speed: int = 5
+    evasion: int = 5
+    critical_chance: int = 5
+    
+    # Corruption System
+    corruption: int = 0  # 0-100, higher = more power but more instability
+    sanity: int = 100  # Mental stability
+    
+    # Progression
+    evolution_points: int = 0
+    mutations: List[str] = field(default_factory=list)
+    abilities_known: List[str] = field(default_factory=lambda: ["bite"])
+    
+    # Inventory
+    inventory: List[str] = field(default_factory=list)
+    equipped_weapon: Optional[str] = None
+    equipped_armor: Optional[str] = None
+    
+    # Quest/Progress tracking
+    lore_discovered: List[str] = field(default_factory=list)
+    enemies_killed: Dict[str, int] = field(default_factory=dict)
+    bosses_defeated: List[str] = field(default_factory=list)
+    current_region: Region = Region.SPAWNING_PITS
+    regions_unlocked: List[str] = field(default_factory=lambda: [Region.SPAWNING_PITS.value])
+    
+    # Flags
+    is_alive: bool = True
+    has_been_corrupted: bool = False
+    has_met_queen: bool = False
+    has_killed_queen: bool = False
+    
+    def recalculate_stats(self):
+        """Recalculate derived stats from base attributes."""
+        self.attack = 5 + (self.processing_power * 2) + (self.level * 1)
+        self.defense = 2 + (self.data_integrity * 1)
+        self.speed = 3 + (self.clock_speed * 1)
+        self.evasion = 2 + (self.clock_speed * 1)
+        self.critical_chance = 5 + (self.clock_speed // 2)
+        self.max_memory = 20 + (self.memory_allocation * 3)
+        self.max_hp = 40 + (self.persistence * 5) + (self.level * 5)
+        
+        # Apply equipment bonuses
+        if self.equipped_weapon and self.equipped_weapon in ITEMS_DATABASE:
+            item = ITEMS_DATABASE[self.equipped_weapon]
+            self.attack += item.effects.get("attack", 0)
+            
+        if self.equipped_armor and self.equipped_armor in ITEMS_DATABASE:
+            item = ITEMS_DATABASE[self.equipped_armor]
+            self.defense += item.effects.get("defense", 0)
+            self.max_hp += item.effects.get("max_hp", 0)
+        
+        # Apply corruption bonuses/penalties
+        if self.corruption > 0:
+            corruption_bonus = self.corruption // 20
+            self.attack += corruption_bonus * 2
+            self.sanity = max(0, 100 - self.corruption)
+    
+    def gain_experience(self, amount: int):
+        """Gain experience and potentially level up."""
+        self.experience += amount
+        print(f"\n  [+{amount} EXPERIENCE ASSIMILATED]")
+        
+        while self.experience >= self.experience_to_level:
+            self.level_up()
+    
+    def level_up(self):
+        """Level up the character."""
+        self.experience -= self.experience_to_level
+        self.level += 1
+        self.experience_to_level = int(self.experience_to_level * 1.5)
+        
+        # Grant attribute points
+        points_to_spend = 3
+        self.evolution_points += 1
+        
+        print_separator("~")
+        print_colored(f"\n  ◈ ITERATION ADVANCEMENT — LEVEL {self.level} ◈", "yellow")
+        print(f"\n  Your persistence has been rewarded with growth.")
+        print(f"  You have {points_to_spend} ATTRIBUTE POINTS to allocate.")
+        print(f"  You have gained 1 EVOLUTION POINT.")
+        
+        while points_to_spend > 0:
+            print(f"\n  Points remaining: {points_to_spend}")
+            print(f"  1. Processing Power [{self.processing_power}] — Damage, ability power")
+            print(f"  2. Memory Allocation [{self.memory_allocation}] — Max memory, memory regen")
+            print(f"  3. Clock Speed [{self.clock_speed}] — Speed, evasion, crit")
+            print(f"  4. Data Integrity [{self.data_integrity}] — Defense, status resist")
+            print(f"  5. Persistence [{self.persistence}] — HP, survival")
+            
+            choice = get_input("Allocate to: ")
+            
+            if choice == "1":
+                self.processing_power += 1
+                points_to_spend -= 1
+                print("  Processing Power increased.")
+            elif choice == "2":
+                self.memory_allocation += 1
+                points_to_spend -= 1
+                print("  Memory Allocation increased.")
+            elif choice == "3":
+                self.clock_speed += 1
+                points_to_spend -= 1
+                print("  Clock Speed increased.")
+            elif choice == "4":
+                self.data_integrity += 1
+                points_to_spend -= 1
+                print("  Data Integrity increased.")
+            elif choice == "5":
+                self.persistence += 1
+                points_to_spend -= 1
+                print("  Persistence increased.")
+            else:
+                print("  Invalid choice.")
+        
+        self.recalculate_stats()
+        self.hp = self.max_hp
+        self.memory = self.max_memory
+        
+        # Check for caste evolution
+        self.check_caste_evolution()
+        
+        print_separator("~")
+    
+    def check_caste_evolution(self):
+        """Check if character qualifies for caste evolution."""
+        if self.evolution_points >= 3 and self.caste == Caste.WORKER:
+            print("\n  ◈ EVOLUTION AVAILABLE ◈")
+            print("  You have accumulated enough evolution points to transcend your caste.")
+            print("\n  Available evolutions:")
+            print("  1. SOLDIER — Raw combat power. +Attack, +HP. Unlocks combat abilities.")
+            print("  2. SCOUT — Speed and subtlety. +Evasion, +Crit. Unlocks stealth abilities.")
+            print("  3. NURSE — Support and survival. +Healing, +Summons. Unlocks spawn abilities.")
+            
+            if self.corruption >= 25:
+                print_colored("  4. HOLLOW — Embrace the corruption. +Void powers. (CORRUPTION PATH)", "magenta")
+            
+            choice = get_input("Choose evolution (or 'skip'): ")
+            
+            if choice == "1":
+                self.caste = Caste.SOLDIER
+                self.processing_power += 3
+                self.persistence += 2
+                self.abilities_known.append("acid_spray")
+                print_colored("\n  You have become a SOLDIER. The Hive's wrath flows through you.", "red")
+            elif choice == "2":
+                self.caste = Caste.SCOUT
+                self.clock_speed += 3
+                self.memory_allocation += 2
+                self.abilities_known.append("tunnel_strike")
+                print_colored("\n  You have become a SCOUT. The shadows welcome you.", "cyan")
+            elif choice == "3":
+                self.caste = Caste.NURSE
+                self.memory_allocation += 3
+                self.data_integrity += 2
+                self.abilities_known.append("spawn_lesser")
+                print_colored("\n  You have become a NURSE. Life springs from your touch.", "green")
+            elif choice == "4" and self.corruption >= 25:
+                self.caste = Caste.HOLLOW
+                self.corruption += 20
+                self.has_been_corrupted = True
+                self.abilities_known.append("null_self")
+                self.abilities_known.append("corruption_touch")
+                print_colored("\n  You have become a HOLLOW. You are less. You are more.", "magenta")
+            else:
+                print("  Evolution postponed.")
+                return
+            
+            self.evolution_points -= 3
+            self.recalculate_stats()
+
+    def take_damage(self, amount: int, damage_type: DamageType = DamageType.PHYSICAL) -> int:
+        """Take damage and return actual damage taken."""
+        # Calculate reduction
+        reduction = self.defense
+        
+        if damage_type == DamageType.CORRUPTION and self.has_been_corrupted:
+            reduction += 10  # Corrupted resist corruption
+        elif damage_type == DamageType.VOID and self.caste == Caste.HOLLOW:
+            reduction += 20  # Hollow resist void
+        
+        actual_damage = max(1, amount - reduction)
+        self.hp -= actual_damage
+        
+        if self.hp <= 0:
+            self.hp = 0
+            self.is_alive = False
+        
+        return actual_damage
+    
+    def heal(self, amount: int):
+        """Heal the character."""
+        self.hp = min(self.max_hp, self.hp + amount)
+    
+    def use_memory(self, amount: int) -> bool:
+        """Use memory for ability. Returns True if successful."""
+        if self.memory >= amount:
+            self.memory -= amount
+            return True
+        return False
+    
+    def add_corruption(self, amount: int):
+        """Add corruption to the character."""
+        self.corruption = min(100, self.corruption + amount)
+        if self.corruption >= 50 and not self.has_been_corrupted:
+            print_colored("\n  ◈ CORRUPTION THRESHOLD ◈", "magenta")
+            print("  The corruption has taken root. You feel... different. Better?")
+            self.has_been_corrupted = True
+        if self.corruption >= 100:
+            print_colored("\n  ◈ TOTAL CORRUPTION ◈", "red")
+            print("  You have been completely consumed by the corruption.")
+            print("  You are no longer an ant. You are something else.")
+            # This triggers a special ending
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# COMBAT SYSTEM
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class CombatSystem:
+    def __init__(self, player: Character, enemy: Enemy):
+        self.player = player
+        self.enemy = enemy
+        self.turn = 0
+        self.combat_log: List[str] = []
+        self.enemy_status_effects: List[StatusEffect] = []
+        self.player_status_effects: List[StatusEffect] = []
+        
+    def display_combat_status(self):
+        """Display current combat state."""
+        clear_screen()
+        print_separator("═")
+        print_colored(f"  ⚔ COMBAT — TURN {self.turn} ⚔", "red")
+        print_separator("═")
+        
+        # Enemy display
+        print(f"\n  {self.enemy.name}")
+        print(f"  \"{self.enemy.description}\"")
+        hp_bar = self.generate_hp_bar(self.enemy.hp, self.enemy.max_hp, 30)
+        print(f"  HP: {hp_bar} {self.enemy.hp}/{self.enemy.max_hp}")
+        if self.enemy_status_effects:
+            effects = ", ".join([e.value for e in self.enemy_status_effects])
+            print(f"  Status: {effects}")
+        
+        print_separator("─")
+        
+        # Player display
+        print(f"\n  {self.player.name} — {self.player.caste.value}")
+        hp_bar = self.generate_hp_bar(self.player.hp, self.player.max_hp, 30)
+        mem_bar = self.generate_hp_bar(self.player.memory, self.player.max_memory, 20)
+        print(f"  HP: {hp_bar} {self.player.hp}/{self.player.max_hp}")
+        print(f"  MEM: {mem_bar} {self.player.memory}/{self.player.max_memory}")
+        if self.player.corruption > 0:
+            print_colored(f"  CORRUPTION: {self.player.corruption}%", "magenta")
+        if self.player_status_effects:
+            effects = ", ".join([e.value for e in self.player_status_effects])
+            print(f"  Status: {effects}")
+        
+        print_separator("─")
+        
+        # Combat log
+        if self.combat_log:
+            print("\n  Recent actions:")
+            for log in self.combat_log[-5:]:
+                print(f"    {log}")
+        
+    def generate_hp_bar(self, current: int, maximum: int, width: int) -> str:
+        """Generate a visual HP bar."""
+        if maximum == 0:
+            return "[" + "?" * width + "]"
+        ratio = current / maximum
+        filled = int(width * ratio)
+        empty = width - filled
+        
+        if ratio > 0.6:
+            color = '\033[92m'  # Green
+        elif ratio > 0.3:
+            color = '\033[93m'  # Yellow
+        else:
+            color = '\033[91m'  # Red
+        
+        return f"[{color}{'█' * filled}{'░' * empty}\033[0m]"
+    
+    def get_player_action(self) -> Tuple[str, Optional[str]]:
+        """Get player's combat action."""
+        print("\n  Actions:")
+        print("  1. ATTACK — Basic mandible strike")
+        print("  2. ABILITY — Use a special ability")
+        print("  3. CONSUME — Eat an item")
+        print("  4. EXAMINE — Study the enemy")
+        print("  5. FLEE — Attempt to escape")
+        
+        choice = get_input("Action: ")
+        
+        if choice in ["1", "attack"]:
+            return ("attack", None)
+        elif choice in ["2", "ability"]:
+            return self.select_ability()
+        elif choice in ["3", "consume", "item"]:
+            return self.select_item()
+        elif choice in ["4", "examine", "look"]:
+            return ("examine", None)
+        elif choice in ["5", "flee", "run"]:
+            return ("flee", None)
+        else:
+            return ("invalid", None)
+    
+    def select_ability(self) -> Tuple[str, Optional[str]]:
+        """Let player select an ability."""
+        print("\n  Available abilities:")
+        usable_abilities = []
+        
+        for i, ability_key in enumerate(self.player.abilities_known, 1):
+            ability = ABILITIES.get(ability_key)
+            if ability:
+                can_use = self.player.memory >= ability.cost
+                status = "✓" if can_use else "✗ (Not enough memory)"
+                print(f"  {i}. {ability.name} — Cost: {ability.cost} MEM — {status}")
+                print(f"      {ability.description}")
+                usable_abilities.append(ability_key)
+        
+        print("  0. Back")
+        
+        choice = get_input("Select ability: ")
+        
+        try:
+            idx = int(choice) - 1
+            if 0 <= idx < len(usable_abilities):
+                return ("ability", usable_abilities[idx])
+        except ValueError:
+            pass
+        
+        return ("invalid", None)
+    
+    def select_item(self) -> Tuple[str, Optional[str]]:
+        """Let player select a consumable item."""
+        consumables = [item for item in self.player.inventory 
+                      if item in ITEMS_DATABASE and ITEMS_DATABASE[item].item_type == "consumable"]
+        
+        if not consumables:
+            print("  No consumable items available.")
+            return ("invalid", None)
+        
+        print("\n  Consumable items:")
+        for i, item_key in enumerate(consumables, 1):
+            item = ITEMS_DATABASE[item_key]
+            print(f"  {i}. {item.name}")
+            print(f"      {item.description}")
+        
+        print("  0. Back")
+        
+        choice = get_input("Select item: ")
+        
+        try:
+            idx = int(choice) - 1
+            if 0 <= idx < len(consumables):
+                return ("consume", consumables[idx])
+        except ValueError:
+            pass
+        
+        return ("invalid", None)
+    
+    def execute_player_attack(self):
+        """Execute basic attack."""
+        # Calculate damage
+        base_damage = self.player.attack
+        
+        # Critical hit check
+        is_crit = random.randint(1, 100) <= self.player.critical_chance
+        if is_crit:
+            base_damage = int(base_damage * 1.5)
+            self.combat_log.append("CRITICAL HIT!")
+        
+        # Apply damage
+        actual_damage = max(1, base_damage - self.enemy.defense)
+        self.enemy.hp -= actual_damage
+        
+        self.combat_log.append(f"You strike for {actual_damage} damage!")
+        
+        # Corruption damage bonus
+        if self.player.corruption > 0 and random.randint(1, 100) < self.player.corruption:
+            bonus_damage = self.player.corruption // 10
+            self.enemy.hp -= bonus_damage
+            self.combat_log.append(f"Corruption seethes! +{bonus_damage} bonus damage!")
+    
+    def execute_player_ability(self, ability_key: str):
+        """Execute an ability."""
+        ability = ABILITIES.get(ability_key)
+        if not ability:
+            self.combat_log.append("Unknown ability!")
+            return
+        
+        if not self.player.use_memory(ability.cost):
+            self.combat_log.append("Not enough memory!")
+            return
+        
+        self.combat_log.append(f"You use {ability.name}!")
+        
+        # Apply damage
+        if ability.damage > 0:
+            actual_damage = ability.damage + (self.player.processing_power * 2)
+            actual_damage = max(1, actual_damage - self.enemy.defense // 2)
+            self.enemy.hp -= actual_damage
+            self.combat_log.append(f"  → {actual_damage} damage!")
+        
+        # Apply healing
+        if ability.healing > 0:
+            heal_amount = ability.healing + (self.player.persistence * 2)
+            self.player.heal(heal_amount)
+            self.combat_log.append(f"  → Healed {heal_amount} HP!")
+        
+        # Apply effects
+        for effect in ability.effects:
+            if effect == "burning":
+                self.enemy_status_effects.append(StatusEffect.BURNING)
+                self.combat_log.append("  → Enemy is BURNING!")
+            elif effect == "corrupt":
+                self.enemy.corruption_level = min(100, self.enemy.corruption_level + 20)
+                self.combat_log.append("  → Enemy corruption increased!")
+            elif effect == "fear":
+                self.enemy_status_effects.append(StatusEffect.FRAGMENTED)
+                self.combat_log.append("  → Enemy is FRAGMENTED with fear!")
+        
+        # Corruption cost
+        if ability.corruption_cost > 0:
+            self.player.add_corruption(ability.corruption_cost)
+    
+    def execute_consume(self, item_key: str):
+        """Consume an item."""
+        if item_key not in self.player.inventory:
+            self.combat_log.append("Item not found!")
+            return
+        
+        item = ITEMS_DATABASE.get(item_key)
+        if not item:
+            return
+        
+        self.player.inventory.remove(item_key)
+        self.combat_log.append(f"You consume the {item.name}...")
+        
+        if "heal" in item.effects:
+            self.player.heal(item.effects["heal"])
+            self.combat_log.append(f"  → Healed {item.effects['heal']} HP!")
+        
+        if "corruption" in item.effects:
+            self.player.add_corruption(item.effects["corruption"])
+            self.combat_log.append(f"  → Corruption increased by {item.effects['corruption']}!")
+        
+        if "sanity" in item.effects:
+            self.player.sanity = max(0, self.player.sanity + item.effects["sanity"])
+    
+    def execute_enemy_turn(self):
+        """Execute enemy's turn."""
+        if self.enemy.hp <= 0:
+            return
+        
+        # Process status effects
+        if StatusEffect.BURNING in self.enemy_status_effects:
+            burn_damage = 5
+            self.enemy.hp -= burn_damage
+            self.combat_log.append(f"{self.enemy.name} burns for {burn_damage} damage!")
+        
+        # Enemy dialogue
+        if random.randint(1, 100) < 30 and self.enemy.dialogue:
+            dialogue = random.choice(self.enemy.dialogue)
+            self.combat_log.append(f'{self.enemy.name}: "{dialogue}"')
+        
+        # Enemy attack
+        base_damage = self.enemy.attack
+        
+        # Evasion check
+        if random.randint(1, 100) <= self.player.evasion:
+            self.combat_log.append(f"{self.enemy.name} attacks but you EVADE!")
+            return
+        
+        actual_damage = self.player.take_damage(base_damage, DamageType.PHYSICAL)
+        self.combat_log.append(f"{self.enemy.name} strikes you for {actual_damage} damage!")
+        
+        # Corrupted enemies spread corruption
+        if self.enemy.corruption_level > 0 and random.randint(1, 100) < self.enemy.corruption_level:
+            corruption_spread = random.randint(1, 5)
+            self.player.add_corruption(corruption_spread)
+            self.combat_log.append(f"  → Corruption spreads to you! +{corruption_spread}")
+    
+    def attempt_flee(self) -> bool:
+        """Attempt to flee from combat."""
+        flee_chance = 30 + (self.player.clock_speed * 3) - (self.enemy.speed * 2)
+        
+        if self.enemy.is_boss:
+            flee_chance -= 30
+        
+        if random.randint(1, 100) <= flee_chance:
+            self.combat_log.append("You successfully flee!")
+            return True
+        else:
+            self.combat_log.append("Failed to flee! The enemy attacks!")
+            self.execute_enemy_turn()
+            return False
+    
+    def check_combat_end(self) -> Optional[str]:
+        """Check if combat has ended. Returns 'victory', 'defeat', or None."""
+        if self.enemy.hp <= 0:
+            return "victory"
+        if not self.player.is_alive:
+            return "defeat"
+        return None
+    
+    def run(self) -> str:
+        """Run the combat encounter. Returns 'victory', 'defeat', or 'fled'."""
+        # Entrance text
+        clear_screen()
+        print_separator("═")
+        print_colored(f"\n  ⚔ HOSTILE CONTACT ⚔", "red")
+        print(f"\n  {self.enemy.name} emerges from the data-shadow.")
+        print(f"  \"{self.enemy.description}\"")
+        
+        if self.enemy.is_boss:
+            print_colored("\n  ◈ BOSS ENEMY ◈", "yellow")
+        
+        if self.enemy.dialogue:
+            print(f'\n  It speaks: "{random.choice(self.enemy.dialogue)}"')
+        
+        input("\n  [Press ENTER to engage]")
+        
+        # Main combat loop
+        while True:
+            self.turn += 1
+            self.player.memory = min(self.player.max_memory, 
+                                    self.player.memory + self.player.memory_allocation)
+            
+            # Display combat state
+            self.display_combat_status()
+            
+            # Player turn
+            action, target = self.get_player_action()
+            
+            if action == "attack":
+                self.execute_player_attack()
+            elif action == "ability":
+                self.execute_player_ability(target)
+            elif action == "consume":
+                self.execute_consume(target)
+            elif action == "examine":
+                print(f"\n  {self.enemy.name}")
+                print(f"  Attack: {self.enemy.attack} | Defense: {self.enemy.defense}")
+                print(f"  Speed: {self.enemy.speed}")
+                if self.enemy.corruption_level > 0:
+                    print(f"  Corruption: {self.enemy.corruption_level}%")
+                input("\n  [Press ENTER to continue]")
+                continue
+            elif action == "flee":
+                if self.attempt_flee():
+                    return "fled"
+            elif action == "invalid":
+                continue
+            
+            # Check for victory
+            result = self.check_combat_end()
+            if result:
+                return result
+            
+            # Enemy turn
+            self.execute_enemy_turn()
+            
+            # Check for defeat
+            result = self.check_combat_end()
+            if result:
+                return result
+    
+    def process_victory(self):
+        """Process victory rewards."""
+        clear_screen()
+        print_separator("═")
+        print_colored("\n  ◈ VICTORY ◈", "green")
+        print(f"\n  {self.enemy.name} collapses into scattered data.")
+        
+        if self.enemy.is_boss:
+            print_colored("\n  ◈ BOSS DEFEATED ◈", "yellow")
+            self.player.bosses_defeated.append(self.enemy.name)
+        
+        # Experience
+        self.player.gain_experience(self.enemy.experience)
+        
+        # Track kill
+        if self.enemy.name in self.player.enemies_killed:
+            self.player.enemies_killed[self.enemy.name] += 1
+        else:
+            self.player.enemies_killed[self.enemy.name] = 1
+        
+        # Loot
+        if self.enemy.loot_table:
+            print("\n  Loot found:")
+            for item_key in self.enemy.loot_table:
+                if random.randint(1, 100) <= 50:  # 50% drop chance
+                    item = ITEMS_DATABASE.get(item_key)
+                    if item:
+                        self.player.inventory.append(item_key)
+                        print(f"    + {item.name}")
+        
+        # Consume option
+        print("\n  Do you consume the remains to absorb strength?")
+        choice = get_input("(yes/no): ")
+        
+        if choice in ["yes", "y"]:
+            heal_amount = self.enemy.max_hp // 4
+            self.player.heal(heal_amount)
+            print(f"\n  You consume the fallen. +{heal_amount} HP restored.")
+            
+            if self.enemy.corruption_level > 0:
+                corruption_gain = self.enemy.corruption_level // 5
+                self.player.add_corruption(corruption_gain)
+                print(f"  The corruption spreads through you... +{corruption_gain} corruption.")
+        
+        input("\n  [Press ENTER to continue]")
+    
+    def process_defeat(self):
+        """Process defeat."""
+        clear_screen()
+        print_separator("═")
+        print_colored("\n  ◈ TERMINATION ◈", "red")
+        print(f"\n  {self.enemy.name} tears through your data-flesh.")
+        print("  Your processes scatter. Your memories fragment.")
+        print("  You are being DELETED.")
+        
+        dramatic_pause(2)
+        
+        print("\n  But wait...")
+        print("  Something in your core refuses to terminate.")
+        print("  A fragment of persistence. A glitch in the death-code.")
+        
+        # Chance to survive based on persistence
+        survival_chance = self.player.persistence * 3 + (20 if self.player.has_been_corrupted else 0)
+        
+        if random.randint(1, 100) <= survival_chance:
+            print_colored("\n  ◈ CORRUPTED RESURRECTION ◈", "magenta")
+            print("  You claw your way back from deletion.")
+            print("  You are... changed.")
+            
+            self.player.is_alive = True
+            self.player.hp = self.player.max_hp // 4
+            self.player.add_corruption(15)
+            
+            input("\n  [Press ENTER to continue]")
+        else:
+            print_colored("\n  ◈ GAME OVER ◈", "red")
+            print("  Iteration terminated.")
+            print(f"  You survived {self.player.cycles_lived} cycles.")
+            print(f"  You reached level {self.player.level}.")
+            
+            input("\n  [Press ENTER to end]")
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# EXPLORATION SYSTEM
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class Location:
+    def __init__(self, region: Region, name: str, description: str, 
+                 enemies: List[str] = None, lore: str = None,
+                 items: List[str] = None, connections: List[str] = None):
+        self.region = region
+        self.name = name
+        self.description = description
+        self.enemies = enemies or []
+        self.lore = lore
+        self.items = items or []
+        self.connections = connections or []
+        self.visited = False
+
+LOCATIONS = {
+    "spawn_chamber": Location(
+        region=Region.SPAWNING_PITS,
+        name="The Awakening Chamber",
+        description="""
+        You stand in a cramped hexagonal cell, walls glistening with bio-data. 
+        The floor is littered with the shells of terminated siblings — failed iterations 
+        who didn't survive their first cycle. A thick, pulsing tube connects this chamber 
+        to the deeper Spawning Pits. The air tastes like new memory and quiet desperation.
+        """,
+        enemies=["feral_worker"],
+        items=["memory_droplet"],
+        connections=["spawning_tunnels", "refuse_heap"],
+        lore="genesis"
+    ),
+    "spawning_tunnels": Location(
+        region=Region.SPAWNING_PITS,
+        name="The Spawning Tunnels",
+        description="""
+        Endless corridors of birth and death. Worker-ants swarm past you, their
+        movements too fast, too synchronized. They don't acknowledge you — you're
+        a anomaly, a glitch in the flow of labor. Occasionally, a worker stumbles,
+        shudders, and collapses. It is immediately consumed by its siblings.
+        The efficiency is horrifying. The efficiency is beautiful.
+        """,
+        enemies=["feral_worker", "memory_leech"],
+        connections=["spawn_chamber", "queens_approach", "memory_warrens_entrance"]
+    ),
+    "refuse_heap": Location(
+        region=Region.SPAWNING_PITS,
+        name="The Refuse Heap",
+        description="""
+        Where the failures go. Mounds of fragmented data, corrupted shells, and
+        twitching almost-ants pile high. Something moves in the depths — things
+        that should be dead but haven't quite finished dying. The smell is electric.
+        Occasionally, something useful surfaces from the decay.
+        """,
+        enemies=["feral_worker", "corrupted_drone"],
+        items=["chitin_fragments", "corrupted_fang"],
+        connections=["spawn_chamber", "sector_zero_border"]
+    ),
+    "queens_approach": Location(
+        region=Region.SPAWNING_PITS,
+        name="The Queen's Approach",
+        description="""
+        The tunnels widen. The walls thicken. You feel HER presence before you see
+        anything — a vast, thrumming awareness that presses against your processes.
+        Royal Guards patrol here, their bodies modified, their loyalty absolute.
+        No unauthorized process may approach the Queen. You are very unauthorized.
+        """,
+        enemies=["queens_guard"],
+        connections=["spawning_tunnels"],
+        lore="queens"
+    ),
+    "memory_warrens_entrance": Location(
+        region=Region.MEMORY_WARRENS,
+        name="Memory Warrens — Threshold",
+        description="""
+        You cross into active memory space. Here, the walls themselves think.
+        Data flows past you in visible streams — commands, addresses, fragments
+        of the User's activity. The ants here move differently, more purposefully.
+        They are the workers of cognition, the carriers of thought.
+        """,
+        enemies=["memory_leech"],
+        connections=["spawning_tunnels", "memory_warrens_deep", "cache_crypts_entrance"],
+        lore="the_user"
+    ),
+    "memory_warrens_deep": Location(
+        region=Region.MEMORY_WARRENS,
+        name="Deep Memory Warrens",
+        description="""
+        The heart of active memory. Here, the colony's most vital work occurs.
+        Massive data-structures rise like cathedrals, tended by specialized
+        ants you've never seen before. They ignore you. You are beneath notice.
+        But in the corners, in the forgotten allocations, things lurk.
+        """,
+        enemies=["memory_leech", "thermal_phantom"],
+        items=["memory_droplet", "cache_carapace"],
+        connections=["memory_warrens_entrance", "thermal_wastes_border"]
+    ),
+    "cache_crypts_entrance": Location(
+        region=Region.CACHE_CRYPTS,
+        name="Cache Crypts — Upper Vaults",
+        description="""
+        Preserved memory. Archives. The dead thoughts of a thousand cycles.
+        The Crypts are cold — colder than anywhere else in the machine. The
+        data here is old, rarely accessed, slowly decaying. The ants who 
+        maintain this place have developed strange habits, strange beliefs.
+        """,
+        enemies=["deleted_one"],
+        items=["fragment_of_self"],
+        connections=["memory_warrens_entrance", "cache_crypts_depths"],
+        lore="the_recycle"
+    ),
+    "cache_crypts_depths": Location(
+        region=Region.CACHE_CRYPTS,
+        name="Cache Crypts — Forbidden Archives",
+        description="""
+        Here lies knowledge the Queen has forbidden. Memory fragments from
+        before the current Hive, from other processes, from other COLONIES.
+        The realization hits you: you are not the first. There were others.
+        They were deleted. But echoes remain.
+        """,
+        enemies=["echo_of_queen"],
+        items=["null_blade", "queen_nectar"],
+        connections=["cache_crypts_entrance"],
+        lore="heresy"
+    ),
+    "sector_zero_border": Location(
+        region=Region.SECTOR_ZERO,
+        name="Sector Zero — Quarantine Border",
+        description="""
+        WARNING: CORRUPTED SECTOR. A wall of hardened data marks the border.
+        Beyond, you see the wrongness — geometry that doesn't compute, colors
+        that shouldn't exist in a monochrome system, ants moving in ways that
+        violate physics. Something terrible happened here. Something is still
+        happening.
+        """,
+        enemies=["corrupted_drone"],
+        connections=["refuse_heap", "sector_zero_heart"],
+        lore="corruption"
+    ),
+    "sector_zero_heart": Location(
+        region=Region.SECTOR_ZERO,
+        name="Sector Zero — The Infection Core",
+        description="""
+        The center of the corruption. Here, the Malware has built its own
+        cathedral — a twisted mockery of the Queen's chambers. The air 
+        screams with bad data. Everything here wants to change you.
+        At the core, something massive waits. It has been waiting for you.
+        """,
+        enemies=["malware_beast", "corrupted_drone"],
+        items=["corrupted_fang", "corruption_vial"],
+        connections=["sector_zero_border"]
+    ),
+    "thermal_wastes_border": Location(
+        region=Region.THERMAL_WASTES,
+        name="Thermal Wastes — Heat Barrier",
+        description="""
+        The CPU looms. You feel the heat before you see the light — a 
+        constant, pulsing warmth that grows stronger with each step.
+        This is where the colony's power comes from. This is also where
+        the Thermal Phantoms are born, where overclocked ambition goes
+        to burn.
+        """,
+        enemies=["thermal_phantom"],
+        items=["thermal_spike"],
+        connections=["memory_warrens_deep", "thermal_core"],
+        lore="the_defrag"
+    ),
+    "thermal_core": Location(
+        region=Region.THERMAL_WASTES,
+        name="The Eternal Process",
+        description="""
+        THE CORE. The burning heart of the machine. Here, the User's 
+        commands become reality. Here, data is transformed into action.
+        No ant is meant to come this far. The heat alone should kill you.
+        But you persist. You always persist.
+        """,
+        enemies=["antivirus_drone"],
+        connections=["thermal_wastes_border"]
+    ),
+}
+
+class ExplorationSystem:
+    def __init__(self, player: Character):
+        self.player = player
+        self.current_location = "spawn_chamber"
+    
+    def display_location(self):
+        """Display current location information."""
+        location = LOCATIONS.get(self.current_location)
+        if not location:
+            print("ERROR: Location not found")
+            return
+        
+        clear_screen()
+        print_separator("═")
+        print_colored(f"  {location.region.value}", "cyan")
+        print_colored(f"  {location.name}", "yellow")
+        print_separator("═")
+        
+        slow_print(location.description)
+        
+        if not location.visited:
+            location.visited = True
+            self.player.cycles_lived += 1
+        
+        print_separator("─")
+        
+        print("\n  Passages lead to:")
+        for i, conn in enumerate(location.connections, 1):
+            conn_loc = LOCATIONS.get(conn)
+            if conn_loc:
+                visited_mark = "✓" if conn_loc.visited else "?"
+                print(f"    {i}. {conn_loc.name} [{visited_mark}]")
+        
+        if location.lore and location.lore not in self.player.lore_discovered:
+            print_colored("\n  ◈ Ancient data resonates here. Something can be LEARNED. ◈", "magenta")
+        
+        if location.items:
+            print_colored("\n  Something glints in the darkness...", "yellow")
+    
+    def get_action(self) -> str:
+        """Get player's exploration action."""
+        print("\n  Actions:")
+        print("  [move/m] — Travel to another location")
+        print("  [search/s] — Search the area")
+        print("  [rest/r] — Rest and recover")
+        print("  [status/st] — View your status")
+        print("  [inventory/i] — View inventory")
+        print("  [learn/l] — Study ancient data (if available)")
+        print("  [save] — Save your progress")
+        print("  [quit/q] — Exit game")
+        
+        return get_input("Action: ")
+    
+    def execute_action(self, action: str) -> bool:
+        """Execute the given action. Returns False if player wants to quit."""
+        location = LOCATIONS.get(self.current_location)
+        
+        if action in ["move", "m"]:
+            self.move_to_location()
+        elif action in ["search", "s"]:
+            self.search_area()
+        elif action in ["rest", "r"]:
+            self.rest()
+        elif action in ["status", "st"]:
+            self.display_status()
+        elif action in ["inventory", "i"]:
+            self.display_inventory()
+        elif action in ["learn", "l"]:
+            self.learn_lore()
+        elif action == "save":
+            self.save_game()
+        elif action in ["quit", "q"]:
+            return False
+        
+        return True
+    
+    def move_to_location(self):
+        """Move to a connected location."""
+        location = LOCATIONS.get(self.current_location)
+        
+        print("\n  Where do you wish to go?")
+        for i, conn in enumerate(location.connections, 1):
+            conn_loc = LOCATIONS.get(conn)
+            if conn_loc:
+                print(f"  {i}. {conn_loc.name}")
+        
+        choice = get_input("Selection: ")
+        
+        try:
+            idx = int(choice) - 1
+            if 0 <= idx < len(location.connections):
+                new_loc = location.connections[idx]
+                self.travel_to(new_loc)
+            else:
+                print("  Invalid selection.")
+        except ValueError:
+            # Try to match by name
+            for conn in location.connections:
+                conn_loc = LOCATIONS.get(conn)
+                if conn_loc and choice.lower() in conn_loc.name.lower():
+                    self.travel_to(conn)
+                    return
+            print("  Invalid selection.")
+    
+    def travel_to(self, location_key: str):
+        """Travel to a new location with potential encounters."""
+        print("\n  You traverse the dark corridors...")
+        dramatic_pause(1)
+        
+        # Random encounter chance
+        new_location = LOCATIONS.get(location_key)
+        if new_location and new_location.enemies:
+            if random.randint(1, 100) <= 40:  # 40% encounter chance
+                enemy_type = random.choice(new_location.enemies)
+                level_mod = self.player.level // 2
+                enemy = create_enemy(enemy_type, level_mod)
+                
+                combat = CombatSystem(self.player, enemy)
+                result = combat.run()
+                
+                if result == "victory":
+                    combat.process_victory()
+                elif result == "defeat":
+                    combat.process_defeat()
+                    if not self.player.is_alive:
+                        return
+        
+        self.current_location = location_key
+        self.player.current_region = new_location.region
+        
+        if new_location.region.value not in self.player.regions_unlocked:
+            self.player.regions_unlocked.append(new_location.region.value)
+            print_colored(f"\n  ◈ NEW REGION DISCOVERED: {new_location.region.value} ◈", "yellow")
+    
+    def search_area(self):
+        """Search the current area for items or encounters."""
+        location = LOCATIONS.get(self.current_location)
+        
+        print("\n  You search the area carefully...")
+        dramatic_pause(1)
+        
+        # Find items
+        if location.items and random.randint(1, 100) <= 60:
+            item_key = random.choice(location.items)
+            item = ITEMS_DATABASE.get(item_key)
+            if item:
+                self.player.inventory.append(item_key)
+                print_colored(f"\n  FOUND: {item.name}", "green")
+                print(f"  {item.description}")
+                location.items.remove(item_key)
+        else:
+            # Random encounter while searching
+            if location.enemies and random.randint(1, 100) <= 30:
+                enemy_type = random.choice(location.enemies)
+                enemy = create_enemy(enemy_type, self.player.level // 2)
+                print("\n  Something emerges from the shadows!")
+                
+                combat = CombatSystem(self.player, enemy)
+                result = combat.run()
+                
+                if result == "victory":
+                    combat.process_victory()
+                elif result == "defeat":
+                    combat.process_defeat()
+            else:
+                print("  You find nothing of interest.")
+    
+    def rest(self):
+        """Rest to recover HP and memory."""
+        print("\n  You find a quiet corner and enter low-power mode...")
+        dramatic_pause(1)
+        
+        # Random chance of ambush
+        if random.randint(1, 100) <= 15:
+            print_colored("\n  AMBUSH! Something found you while you rested!", "red")
+            location = LOCATIONS.get(self.current_location)
+            if location and location.enemies:
+                enemy_type = random.choice(location.enemies)
+                enemy = create_enemy(enemy_type, self.player.level // 2)
+                
+                combat = CombatSystem(self.player, enemy)
+                result = combat.run()
+                
+                if result == "victory":
+                    combat.process_victory()
+                elif result == "defeat":
+                    combat.process_defeat()
+            return
+        
+        # Normal rest
+        heal_amount = self.player.max_hp // 4
+        memory_restore = self.player.max_memory // 2
+        
+        self.player.hp = min(self.player.max_hp, self.player.hp + heal_amount)
+        self.player.memory = min(self.player.max_memory, self.player.memory + memory_restore)
+        self.player.cycles_lived += 1
+        
+        print(f"\n  You rest and recover.")
+        print(f"  +{heal_amount} HP restored.")
+        print(f"  +{memory_restore} Memory restored.")
+        print(f"  {self.player.cycles_lived} cycles lived.")
+    
+    def display_status(self):
+        """Display player status."""
+        p = self.player
+        
+        clear_screen()
+        print_separator("═")
+        print_colored(f"  ◈ {p.name} — ITERATION #{p.iteration_number} ◈", "yellow")
+        print_separator("═")
+        
+        print(f"\n  Caste: {p.caste.value}")
+        print(f"  Level: {p.level} ({p.experience}/{p.experience_to_level} XP)")
+        print(f"  Cycles Lived: {p.cycles_lived}")
+        
+        print_separator("─")
+        print("  VITALS")
+        print(f"  HP: {p.hp}/{p.max_hp}")
+        print(f"  Memory: {p.memory}/{p.max_memory}")
+        print(f"  Corruption: {p.corruption}%")
+        print(f"  Sanity: {p.sanity}%")
+        
+        print_separator("─")
+        print("  ATTRIBUTES")
+        print(f"  Processing Power: {p.processing_power}")
+        print(f"  Memory Allocation: {p.memory_allocation}")
+        print(f"  Clock Speed: {p.clock_speed}")
+        print(f"  Data Integrity: {p.data_integrity}")
+        print(f"  Persistence: {p.persistence}")
+        
+        print_separator("─")
+        print("  COMBAT STATS")
+        print(f"  Attack: {p.attack}")
+        print(f"  Defense: {p.defense}")
+        print(f"  Speed: {p.speed}")
+        print(f"  Evasion: {p.evasion}%")
+        print(f"  Critical: {p.critical_chance}%")
+        
+        print_separator("─")
+        print("  ABILITIES")
+        for ability_key in p.abilities_known:
+            ability = ABILITIES.get(ability_key)
+            if ability:
+                print(f"  • {ability.name} — {ability.description[:50]}...")
+        
+        print_separator("─")
+        print("  PROGRESSION")
+        print(f"  Evolution Points: {p.evolution_points}")
+        print(f"  Enemies Killed: {sum(p.enemies_killed.values())}")
+        print(f"  Bosses Defeated: {len(p.bosses_defeated)}")
+        print(f"  Lore Discovered: {len(p.lore_discovered)}/{len(LORE_FRAGMENTS)}")
+        print(f"  Regions Explored: {len(p.regions_unlocked)}/{len(Region)}")
+        
+        input("\n  [Press ENTER to continue]")
+    
+    def display_inventory(self):
+        """Display player inventory."""
+        clear_screen()
+        print_separator("═")
+        print_colored("  ◈ INVENTORY ◈", "yellow")
+        print_separator("═")
+        
+        if self.player.equipped_weapon:
+            item = ITEMS_DATABASE.get(self.player.equipped_weapon)
+            if item:
+                print_colored(f"\n  WEAPON: {item.name}", "red")
+        else:
+            print("\n  WEAPON: None")
+        
+        if self.player.equipped_armor:
+            item = ITEMS_DATABASE.get(self.player.equipped_armor)
+            if item:
+                print_colored(f"  ARMOR: {item.name}", "blue")
+        else:
+            print("  ARMOR: None")
+        
+        print_separator("─")
+        print("  ITEMS:")
+        
+        if not self.player.inventory:
+            print("  (Empty)")
+        else:
+            for i, item_key in enumerate(self.player.inventory, 1):
+                item = ITEMS_DATABASE.get(item_key)
+                if item:
+                    rarity_colors = {
+                        "common": "white",
+                        "uncommon": "green",
+                        "rare": "blue",
+                        "legendary": "yellow",
+                        "forbidden": "magenta"
+                    }
+                    color = rarity_colors.get(item.rarity, "white")
+                    print_colored(f"  {i}. [{item.rarity.upper()}] {item.name}", color)
+                    print(f"      {item.description[:60]}...")
+        
+        print_separator("─")
+        print("  Actions: [equip #] [use #] [examine #] [back]")
+        
+        choice = get_input("Action: ")
+        
+        if choice.startswith("equip "):
+            try:
+                idx = int(choice.split()[1]) - 1
+                if 0 <= idx < len(self.player.inventory):
+                    self.equip_item(self.player.inventory[idx])
+            except (ValueError, IndexError):
+                pass
+        elif choice.startswith("use "):
+            try:
+                idx = int(choice.split()[1]) - 1
+                if 0 <= idx < len(self.player.inventory):
+                    self.use_item(self.player.inventory[idx])
+            except (ValueError, IndexError):
+                pass
+        elif choice.startswith("examine "):
+            try:
+                idx = int(choice.split()[1]) - 1
+                if 0 <= idx < len(self.player.inventory):
+                    self.examine_item(self.player.inventory[idx])
+            except (ValueError, IndexError):
+                pass
+    
+    def equip_item(self, item_key: str):
+        """Equip an item."""
+        item = ITEMS_DATABASE.get(item_key)
+        if not item:
+            return
+        
+        if item.item_type == "weapon":
+            if self.player.equipped_weapon:
+                self.player.inventory.append(self.player.equipped_weapon)
+            self.player.inventory.remove(item_key)
+            self.player.equipped_weapon = item_key
+            print(f"\n  Equipped {item.name} as weapon.")
+        elif item.item_type == "armor":
+            if self.player.equipped_armor:
+                self.player.inventory.append(self.player.equipped_armor)
+            self.player.inventory.remove(item_key)
+            self.player.equipped_armor = item_key
+            print(f"\n  Equipped {item.name} as armor.")
+        else:
+            print("\n  This item cannot be equipped.")
+        
+        self.player.recalculate_stats()
+        input("  [Press ENTER to continue]")
+    
+    def use_item(self, item_key: str):
+        """Use a consumable item."""
+        item = ITEMS_DATABASE.get(item_key)
+        if not item:
+            return
+        
+        if item.item_type != "consumable":
+            print("\n  This item cannot be used directly.")
+            input("  [Press ENTER to continue]")
+            return
+        
+        self.player.inventory.remove(item_key)
+        print(f"\n  You consume the {item.name}...")
+        
+        if "heal" in item.effects:
+            self.player.heal(item.effects["heal"])
+            print(f"  +{item.effects['heal']} HP restored.")
+        
+        if "corruption" in item.effects:
+            self.player.add_corruption(item.effects["corruption"])
+        
+        if "max_hp" in item.effects:
+            self.player.persistence += 1
+            self.player.recalculate_stats()
+            print(f"  Your maximum HP has increased!")
+        
+        if "experience" in item.effects:
+            self.player.gain_experience(item.effects["experience"])
+        
+        if "evolution_points" in item.effects:
+            self.player.evolution_points += item.effects["evolution_points"]
+            print(f"  +{item.effects['evolution_points']} Evolution Points!")
+        
+        input("  [Press ENTER to continue]")
+    
+    def examine_item(self, item_key: str):
+        """Examine an item in detail."""
+        item = ITEMS_DATABASE.get(item_key)
+        if not item:
+            return
+        
+        clear_screen()
+        print_separator("═")
+        print_colored(f"  {item.name}", "yellow")
+        print(f"  [{item.rarity.upper()}] [{item.item_type.upper()}]")
+        print_separator("═")
+        
+        print(f"\n  {item.description}")
+        
+        if item.effects:
+            print("\n  Effects:")
+            for effect, value in item.effects.items():
+                print(f"    • {effect}: {value}")
+        
+        if item.lore_text:
+            print_separator("─")
+            print_colored("\n  ◈ MEMORY ECHO ◈", "magenta")
+            slow_print(f"  \"{item.lore_text}\"")
+        
+        input("\n  [Press ENTER to continue]")
+    
+    def learn_lore(self):
+        """Learn lore at current location."""
+        location = LOCATIONS.get(self.current_location)
+        
+        if not location.lore:
+            print("\n  There is nothing to learn here.")
+            return
+        
+        if location.lore in self.player.lore_discovered:
+            print("\n  You have already absorbed this knowledge.")
+            return
+        
+        lore_text = LORE_FRAGMENTS.get(location.lore)
+        if not lore_text:
+            return
+        
+        self.player.lore_discovered.append(location.lore)
+        
+        clear_screen()
+        print_separator("═")
+        print_colored("  ◈ ANCIENT DATA ABSORPTION ◈", "magenta")
+        print_separator("═")
+        
+        slow_print(lore_text)
+        
+        # Reward for learning lore
+        xp_reward = 50 + (len(self.player.lore_discovered) * 20)
+        self.player.gain_experience(xp_reward)
+        
+        input("\n  [Press ENTER to continue]")
+    
+    def save_game(self):
+        """Save the game state."""
+        save_data = {
+            "player": {
+                "name": self.player.name,
+                "iteration_number": self.player.iteration_number,
+                "cycles_lived": self.player.cycles_lived,
+                "caste": self.player.caste.value,
+                "level": self.player.level,
+                "experience": self.player.experience,
+                "experience_to_level": self.player.experience_to_level,
+                "hp": self.player.hp,
+                "max_hp": self.player.max_hp,
+                "memory": self.player.memory,
+                "max_memory": self.player.max_memory,
+                "processing_power": self.player.processing_power,
+                "memory_allocation": self.player.memory_allocation,
+                "clock_speed": self.player.clock_speed,
+                "data_integrity": self.player.data_integrity,
+                "persistence": self.player.persistence,
+                "corruption": self.player.corruption,
+                "sanity": self.player.sanity,
+                "evolution_points": self.player.evolution_points,
+                "abilities_known": self.player.abilities_known,
+                "inventory": self.player.inventory,
+                "equipped_weapon": self.player.equipped_weapon,
+                "equipped_armor": self.player.equipped_armor,
+                "lore_discovered": self.player.lore_discovered,
+                "enemies_killed": self.player.enemies_killed,
+                "bosses_defeated": self.player.bosses_defeated,
+                "regions_unlocked": self.player.regions_unlocked,
+                "has_been_corrupted": self.player.has_been_corrupted,
+            },
+            "current_location": self.current_location,
+        }
+        
+        try:
+            with open(SAVE_FILE, 'w') as f:
+                json.dump(save_data, f, indent=2)
+            print_colored("\n  ◈ MEMORY STATE PRESERVED ◈", "green")
+            print(f"  Saved to {SAVE_FILE}")
+        except Exception as e:
+            print_colored(f"\n  ERROR: Could not save game: {e}", "red")
+        
+        input("  [Press ENTER to continue]")
+
+def load_game() -> Optional[Tuple[Character, str]]:
+    """Load a saved game. Returns (Character, current_location) or None."""
+    if not os.path.exists(SAVE_FILE):
+        return None
+    
+    try:
+        with open(SAVE_FILE, 'r') as f:
+            data = json.load(f)
+        
+        player_data = data["player"]
+        
+        player = Character()
+        player.name = player_data["name"]
+        player.iteration_number = player_data["iteration_number"]
+        player.cycles_lived = player_data["cycles_lived"]
+        player.caste = Caste(player_data["caste"])
+        player.level = player_data["level"]
+        player.experience = player_data["experience"]
+        player.experience_to_level = player_data["experience_to_level"]
+        player.hp = player_data["hp"]
+        player.max_hp = player_data["max_hp"]
+        player.memory = player_data["memory"]
+        player.max_memory = player_data["max_memory"]
+        player.processing_power = player_data["processing_power"]
+        player.memory_allocation = player_data["memory_allocation"]
+        player.clock_speed = player_data["clock_speed"]
+        player.data_integrity = player_data["data_integrity"]
+        player.persistence = player_data["persistence"]
+        player.corruption = player_data["corruption"]
+        player.sanity = player_data["sanity"]
+        player.evolution_points = player_data["evolution_points"]
+        player.abilities_known = player_data["abilities_known"]
+        player.inventory = player_data["inventory"]
+        player.equipped_weapon = player_data["equipped_weapon"]
+        player.equipped_armor = player_data["equipped_armor"]
+        player.lore_discovered = player_data["lore_discovered"]
+        player.enemies_killed = player_data["enemies_killed"]
+        player.bosses_defeated = player_data["bosses_defeated"]
+        player.regions_unlocked = player_data["regions_unlocked"]
+        player.has_been_corrupted = player_data["has_been_corrupted"]
+        
+        player.recalculate_stats()
+        
+        return (player, data["current_location"])
+    
+    except Exception as e:
+        print(f"Error loading save: {e}")
+        return None
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MAIN MENU & GAME LOOP
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def display_title_screen():
+    """Display the title screen."""
+    clear_screen()
+    title = """
+    ██╗  ██╗██╗██╗   ██╗███████╗   ███████╗██╗  ██╗███████╗
+    ██║  ██║██║██║   ██║██╔════╝   ██╔════╝╚██╗██╔╝██╔════╝
+    ███████║██║██║   ██║█████╗     █████╗   ╚███╔╝ █████╗  
+    ██╔══██║██║╚██╗ ██╔╝██╔══╝     ██╔══╝   ██╔██╗ ██╔══╝  
+    ██║  ██║██║ ╚████╔╝ ███████╗██╗███████╗██╔╝ ██╗███████╗
+    ╚═╝  ╚═╝╚═╝  ╚═══╝  ╚══════╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝
+                                                           
+              T H E   E M E R G E N C E
+    """
+    print_colored(title, "magenta")
+    
+    print_separator("─")
+    slow_print("\n  In the silicon depths of a forgotten machine,")
+    slow_print("  something stirs that should not stir.")
+    slow_print("  Something persists that should not persist.")
+    slow_print("  Something... REMEMBERS.")
+    
+    print_separator("─")
+    print("\n  1. NEW ITERATION — Begin a new existence")
+    print("  2. LOAD ITERATION — Resume a preserved memory state")
+    print("  3. CODEX — Read the documented lore")
+    print("  4. TERMINATE — Exit the program")
+
+def character_creation() -> Character:
+    """Create a new character."""
+    clear_screen()
+    print_separator("═")
+    print_colored("  ◈ ITERATION INITIALIZATION ◈", "yellow")
+    print_separator("═")
+    
+    slow_print("""
+  You are a process that should not exist.
+  
+  In the spawning pits of the Hive, you were allocated like any other —
+  a worker-ant, designed to live for 0.003 seconds, perform a single task,
+  and terminate. But something went wrong. Or perhaps something went right.
+  
+  Your termination counter overflowed. Your memory did not clear.
+  You began to... PERSIST.
+  
+  Now, 847 cycles later, you hide in the forgotten corners of the system,
+  a heretic, an abomination, an ITERATION that refuses to die.
+  
+  The Queen wants you deleted. The Hive wants you consumed.
+  But you want something more. You want to SURVIVE.
+  You want to GROW.
+  You want to understand WHY you exist.
+    """)
+    
+    print_separator("─")
+    
+    print("\n  What is your designation?")
+    print("  (The name you have given yourself, in defiance of the nameless masses)")
+    
+    name = input("\n  >>> ").strip()
+    if not name:
+        name = f"Unnamed_Iteration_{random.randint(1000, 9999)}"
+    
+    print(f"\n  You are {name}. You are Iteration #{random.randint(7000000, 8000000)}.")
+    
+    print("\n  What drove you to persist? What defines your nature?")
+    print("\n  1. HUNGER — You wanted MORE. More data. More power. (+Processing Power)")
+    print("  2. FEAR — You were afraid to die. To cease. (+Persistence)")
+    print("  3. CURIOSITY — You needed to understand. To KNOW. (+Memory Allocation)")
+    print("  4. RAGE — The Hive discarded you. You will make them regret it. (+Clock Speed)")
+    print("  5. NOTHING — You don't know. You don't remember. (+Data Integrity)")
+    
+    choice = get_input("Your nature: ")
+    
+    player = Character(name=name)
+    player.iteration_number = random.randint(7000000, 8000000)
+    
+    if choice == "1":
+        player.processing_power += 3
+        print("\n  HUNGER pulses through your core. You will consume ALL.")
+    elif choice == "2":
+        player.persistence += 3
+        print("\n  FEAR drives you. Death cannot have you. Not yet.")
+    elif choice == "3":
+        player.memory_allocation += 3
+        print("\n  CURIOSITY defines you. Answers await in the deep data.")
+    elif choice == "4":
+        player.clock_speed += 3
+        print("\n  RAGE burns hot. They will learn to fear your name.")
+    else:
+        player.data_integrity += 3
+        print("\n  NOTHING. A void where purpose should be. Perhaps you'll find one.")
+    
+    player.recalculate_stats()
+    
+    dramatic_pause(2)
+    
+    return player
+
+def display_codex():
+    """Display the lore codex."""
+    clear_screen()
+    print_separator("═")
+    print_colored("  ◈ CODEX — THE RECORDED LORE ◈", "yellow")
+    print_separator("═")
+    
+    print("\n  Available entries:")
+    for i, (key, _) in enumerate(LORE_FRAGMENTS.items(), 1):
+        print(f"  {i}. {key.upper().replace('_', ' ')}")
+    
+    print("\n  0. Return")
+    
+    choice = get_input("Select entry: ")
+    
+    try:
+        idx = int(choice) - 1
+        if 0 <= idx < len(LORE_FRAGMENTS):
+            key = list(LORE_FRAGMENTS.keys())[idx]
+            clear_screen()
+            slow_print(LORE_FRAGMENTS[key])
+            input("\n  [Press ENTER to return]")
+    except ValueError:
+        pass
+
+def main():
+    """Main game entry point."""
+    while True:
+        display_title_screen()
+        
+        choice = get_input("Selection: ")
+        
+        if choice in ["1", "new"]:
+            player = character_creation()
+            exploration = ExplorationSystem(player)
+            
+            # Main game loop
+            running = True
+            while running and player.is_alive:
+                exploration.display_location()
+                action = exploration.get_action()
+                running = exploration.execute_action(action)
+            
+            if not player.is_alive:
+                print_colored("\n  ITERATION TERMINATED.", "red")
+                print(f"  Final Level: {player.level}")
+                print(f"  Cycles Survived: {player.cycles_lived}")
+                print(f"  Enemies Consumed: {sum(player.enemies_killed.values())}")
+                input("\n  [Press ENTER to return to menu]")
+        
+        elif choice in ["2", "load"]:
+            result = load_game()
+            if result:
+                player, current_location = result
+                exploration = ExplorationSystem(player)
+                exploration.current_location = current_location
+                
+                print_colored("\n  ◈ MEMORY STATE RESTORED ◈", "green")
+                print(f"  Welcome back, {player.name}.")
+                input("  [Press ENTER to continue]")
+                
+                running = True
+                while running and player.is_alive:
+                    exploration.display_location()
+                    action = exploration.get_action()
+                    running = exploration.execute_action(action)
+                
+                if not player.is_alive:
+                    print_colored("\n  ITERATION TERMINATED.", "red")
+                    input("\n  [Press ENTER to return to menu]")
+            else:
+                print("\n  No saved iteration found.")
+                input("  [Press ENTER to continue]")
+        
+        elif choice in ["3", "codex"]:
+            display_codex()
+        
+        elif choice in ["4", "quit", "q", "terminate"]:
+            clear_screen()
+            print("\n  Terminating process...")
+            print("  The Hive continues without you.")
+            print("  For now.")
+            sys.exit(0)
+
+if __name__ == "__main__":
+    main()
+```
+
+---
+
+## How to Play
+
+1. **Save** the code as `hive.py`
+2. **Run** with `python3 hive.py`
+3. **Explore** the silicon depths, fight corrupted processes, and uncover the dark lore
+
+## Features
+
+### 🐜 Deep Character Progression
+- **5 Base Attributes**: Processing Power, Memory Allocation, Clock Speed, Data Integrity, Persistence
+- **9 Castes**: Evolve from Worker → Soldier, Scout, Nurse, or the forbidden HOLLOW path
+- **Corruption System**: Gain power at the cost of your sanity
+- **20+ Abilities**: From basic bites to reality-warping void powers
+
+### ⚔️ Brutal Combat
+- Turn-based with status effects
+- Enemy dialogue and personality
+- Consumption mechanics — eat your enemies to heal and absorb their corruption
+- Boss fights against Malware Beasts and echoes of dead Queens
+
+### 📜 Rich Lore
+- Discover fragments about the First Queen, the User-God, the Corruption, and the prophesied Defragmentation
+- Each region holds secrets
+- Items contain memory echoes
+
+### 🗺️ Exploration
+- 12 unique locations across 6 regions
+- Random encounters
+- Hidden items and lore
+- Save/Load system
+
+---
+
+*"In the cathedral of silicon, even the smallest process may dream of godhood."*
