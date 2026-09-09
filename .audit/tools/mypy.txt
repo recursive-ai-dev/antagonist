@@ -1,0 +1,3 @@
+$ mypy --no-error-summary /app
+There are no .py[i] files in directory '/app'
+[exit 2]

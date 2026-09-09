@@ -1,0 +1,4 @@
+$ pytest -q --no-header
+
+no tests ran in 0.04s
+[exit 5]

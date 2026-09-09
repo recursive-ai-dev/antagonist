@@ -1,0 +1,112 @@
+
+
+┌──────────────────┐
+│ 19 Code Findings │
+└──────────────────┘
+
+    /app/.github/workflows/ci-cd.yml
+    ❯❱ yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag
+          ❰❰ Blocking ❱❱
+          GitHub Actions step uses a mutable tag or branch reference. Tags and branch names can be silently
+          repointed by the action owner, enabling supply-chain attacks — as seen in the trivy-action and kics-
+          github-action compromises. Pin the reference to a full 40-character commit SHA instead, e.g. `uses:
+          actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608`.
+          Details: https://sg.run/2LgAL
+
+           19┆ - uses: actions/checkout@v4
+            ⋮┆----------------------------------------
+           24┆ uses: actions/setup-node@v4
+            ⋮┆----------------------------------------
+           47┆ - uses: actions/checkout@v4
+            ⋮┆----------------------------------------
+           50┆ uses: actions/setup-node@v4
+            ⋮┆----------------------------------------
+          110┆ uses: actions/upload-artifact@v4
+            ⋮┆----------------------------------------
+          123┆ uses: actions/download-artifact@v4
+            ⋮┆----------------------------------------
+          180┆ uses: actions/download-artifact@v4
+            ⋮┆----------------------------------------
+          187┆ uses: nwtgck/actions-netlify@v3
+            ⋮┆----------------------------------------
+          226┆ uses: actions/download-artifact@v4
+            ⋮┆----------------------------------------
+          233┆ uses: nwtgck/actions-netlify@v3
+
+    /app/scripts/generateAudio.js
+    ❯❱ javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal
+          ❰❰ Blocking ❱❱
+          Detected possible user input going into a `path.join` or `path.resolve` function. This could
+          possibly lead to a path traversal vulnerability,  where the attacker can access arbitrary files
+          stored in the file system. Instead, be sure to sanitize or validate user input first.
+          Details: https://sg.run/OPqk
+
+          258┆ const fullPath = path.join(OUTPUT_DIR, filePath);
+
+     ❱ javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring
+          ❰❰ Blocking ❱❱
+          Detected string concatenation with a non-literal variable in a util.format / console.log function.
+          If an attacker injects a format specifier in the string, it will forge the log message. Try to use
+          constant values for the format string.
+          Details: https://sg.run/7Y5R
+
+          299┆ console.error(`❌ Failed: ${filePath}`, error);
+
+    /app/src/hooks/useGameEngine.ts
+     ❱ javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring
+          ❰❰ Blocking ❱❱
+          Detected string concatenation with a non-literal variable in a util.format / console.log function.
+          If an attacker injects a format specifier in the string, it will forge the log message. Try to use
+          constant values for the format string.
+          Details: https://sg.run/7Y5R
+
+          110┆ `[${diag.systemName}][game_tick=${diag.gameTick}][state_hash=${diag.stateHash.slice(0, 8)}]
+               ${message}`,
+
+    /app/src/utils/achievementSystem.ts
+    ❯❱ javascript.lang.security.audit.prototype-pollution.prototype-pollution-loop.prototype-pollution-loop
+          ❰❰ Blocking ❱❱
+          Possibility of prototype polluting function detected. By adding or modifying attributes of an object
+          prototype, it is possible to create attributes that exist on every object, or replace critical
+          attributes with malicious ones. This can be problematic if the software depends on existence or non-
+          existence of certain attributes, or uses pre-defined attributes of object prototype (such as
+          hasOwnProperty, toString or valueOf). Possible mitigations might be: freezing the object prototype,
+          using an object without prototypes (via Object.create(null) ), blocking modifications of attributes
+          that resolve to object prototype, using Map instead of object.
+          Details: https://sg.run/w1DB
+
+          190┆ value = value[part];
+
+    /app/src/utils/audio.ts
+     ❱ javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring
+          ❰❰ Blocking ❱❱
+          Detected string concatenation with a non-literal variable in a util.format / console.log function.
+          If an attacker injects a format specifier in the string, it will forge the log message. Try to use
+          constant values for the format string.
+          Details: https://sg.run/7Y5R
+
+          146┆ console.error(`[AudioEngine] Failed to load ${id}:`, error);
+
+    /app/src/utils/errorHandling.ts
+     ❱ javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring
+          ❰❰ Blocking ❱❱
+          Detected string concatenation with a non-literal variable in a util.format / console.log function.
+          If an attacker injects a format specifier in the string, it will forge the log message. Try to use
+          constant values for the format string.
+          Details: https://sg.run/7Y5R
+
+          198┆ console.error(`[Error] ${error.action}:`, error.metadata);
+
+    /app/src/utils/eventBus.ts
+     ❱ javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring
+          ❰❰ Blocking ❱❱
+          Detected string concatenation with a non-literal variable in a util.format / console.log function.
+          If an attacker injects a format specifier in the string, it will forge the log message. Try to use
+          constant values for the format string.
+          Details: https://sg.run/7Y5R
+
+           56┆ console.error(`[EventBus] Error in ${event.type} handler:`, error);
+            ⋮┆----------------------------------------
+           69┆ console.log(`[EventBus] Published: ${event.type}`, event);
+            ⋮┆----------------------------------------
+          146┆ console.error(`[EventBus] Error in batch ${event.type} handler:`, error);

@@ -1,0 +1,314 @@
+$ npx --no-install tsc --noEmit
+src/App.tsx(1,52): error TS6133: 'useReducer' is declared but its value is never read.
+src/App.tsx(2,24): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/App.tsx(4,21): error TS6133: 'OutputLine' is declared but its value is never read.
+src/App.tsx(4,78): error TS6133: 'GameEvent' is declared but its value is never read.
+src/App.tsx(20,27): error TS6133: 'sanitizeHTML' is declared but its value is never read.
+src/App.tsx(35,10): error TS6133: 'isEncounterOpen' is declared but its value is never read.
+src/App.tsx(35,27): error TS6133: 'setIsEncounterOpen' is declared but its value is never read.
+src/App.tsx(37,9): error TS6133: 'outputRef' is declared but its value is never read.
+src/App.tsx(364,9): error TS6133: 'handleShowMastery' is declared but its value is never read.
+src/App.tsx(509,23): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/App.tsx(558,11): error TS2322: Type '{ achievement: Achievement; onDismiss: () => void; }' is not assignable to type 'IntrinsicAttributes & NotificationToastProps'.
+  Property 'achievement' does not exist on type 'IntrinsicAttributes & NotificationToastProps'.
+src/components/AchievementList.tsx(13,24): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/AchievementList.tsx(19,3): error TS6133: 'Filter' is declared but its value is never read.
+src/components/AchievementList.tsx(20,3): error TS6133: 'SortAsc' is declared but its value is never read.
+src/components/AchievementList.tsx(22,3): error TS6133: 'X' is declared but its value is never read.
+src/components/AchievementList.tsx(25,8): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/AchievementList.tsx(26,23): error TS6133: 'ACHIEVEMENTS' is declared but its value is never read.
+src/components/AchievementList.tsx(109,9): error TS6133: 'progressPercent' is declared but its value is never read.
+src/components/AchievementList.tsx(109,42): error TS18048: 'achievement.progress' is possibly 'undefined'.
+src/components/AchievementList.tsx(109,65): error TS18048: 'achievement.maxProgress' is possibly 'undefined'.
+src/components/AchievementList.tsx(148,22): error TS2322: Type '"common" | "uncommon" | "rare" | "epic" | "legendary"' is not assignable to type '"rare" | "epic" | "legendary" | "error" | "success" | "warning" | "default" | undefined'.
+  Type '"common"' is not assignable to type '"rare" | "epic" | "legendary" | "error" | "success" | "warning" | "default" | undefined'.
+src/components/AchievementList.tsx(172,17): error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/components/AchievementList.tsx(173,17): error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/components/AchievementList.tsx(274,24): error TS2304: Cannot find name 'useCallback'.
+src/components/AutoSaveIndicator.tsx(12,41): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/AutoSaveIndicator.tsx(13,55): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/AutoSaveIndicator.tsx(16,32): error TS6133: 'NotificationData' is declared but its value is never read.
+src/components/AutoSaveIndicator.tsx(253,14): error TS2304: Cannot find name 'X'.
+src/components/CommandInput.tsx(2,41): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/CommandInput.tsx(3,157): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/CommandInput.tsx(47,9): error TS6133: 'handleDirectionalClick' is declared but its value is never read.
+src/components/EncounterPreparation.tsx(9,41): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/EncounterPreparation.tsx(23,8): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/EncounterPreparation.tsx(474,21): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/GameLayout.tsx(1,24): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/GameLayout.tsx(15,3): error TS6133: 'ArrowUp' is declared but its value is never read.
+src/components/GameLayout.tsx(16,3): error TS6133: 'ArrowDown' is declared but its value is never read.
+src/components/GameLayout.tsx(17,3): error TS6133: 'ArrowLeft' is declared but its value is never read.
+src/components/GameLayout.tsx(18,3): error TS6133: 'ArrowRight' is declared but its value is never read.
+src/components/GameLayout.tsx(20,8): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/GameLayout.tsx(122,16): error TS2304: Cannot find name 'onAudioRetry'.
+src/components/GameLayout.tsx(126,28): error TS2304: Cannot find name 'onAudioRetry'.
+src/components/GameLayout.tsx(293,9): error TS6133: 'prefersReducedMotion' is declared but its value is never read.
+src/components/GameLayout.tsx(296,9): error TS6133: 'showExportWarning' is declared but its value is never read.
+src/components/GameStateDisplay.tsx(9,41): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/GameStateDisplay.tsx(15,3): error TS6133: 'TrendingUp' is declared but its value is never read.
+src/components/GameStateDisplay.tsx(16,3): error TS6133: 'TrendingDown' is declared but its value is never read.
+src/components/GameStateDisplay.tsx(17,3): error TS6133: 'Clock' is declared but its value is never read.
+src/components/GameStateDisplay.tsx(20,3): error TS6133: 'MessageCircle' is declared but its value is never read.
+src/components/GameStateDisplay.tsx(25,8): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/GameStateDisplay.tsx(26,21): error TS2305: Module '"../types/game"' has no exported member 'TraversalMode'.
+src/components/GameStateDisplay.tsx(26,36): error TS6133: 'ComboTier' is declared but its value is never read.
+src/components/GameStateDisplay.tsx(26,47): error TS6133: 'ActionType' is declared but its value is never read.
+src/components/GameStateDisplay.tsx(27,10): error TS6133: 'Button' is declared but its value is never read.
+src/components/GameStateDisplay.tsx(84,9): error TS6133: 'avgSaturation' is declared but its value is never read.
+src/components/GameStateDisplay.tsx(459,41): error TS6133: 'displayMode' is declared but its value is never read.
+src/components/GameStateDisplay.tsx(550,37): error TS6133: 'displayMode' is declared but its value is never read.
+src/components/MasteryDisplay.tsx(8,20): error TS6133: 'useEffect' is declared but its value is never read.
+src/components/MasteryDisplay.tsx(9,41): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/MasteryDisplay.tsx(20,3): error TS6133: 'Circle' is declared but its value is never read.
+src/components/MasteryDisplay.tsx(22,8): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/MasteryDisplay.tsx(238,60): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/components/MasteryDisplay.tsx(286,20): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Record<MasteryRank, { name: string; minChallenges: number; color: string; }>'.
+src/components/MasteryDisplay.tsx(348,37): error TS6133: 'trackColor' is declared but its value is never read.
+src/components/NotificationToast.tsx(13,41): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/NotificationToast.tsx(14,74): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/NotificationToast.tsx(103,9): error TS6133: 'prefersReducedMotion' is declared but its value is never read.
+src/components/SettingsModal.tsx(2,1): error TS6133: 'motion' is declared but its value is never read.
+src/components/SettingsModal.tsx(2,24): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/SettingsModal.tsx(5,3): error TS6133: 'Music' is declared but its value is never read.
+src/components/SettingsModal.tsx(6,3): error TS6133: 'Type' is declared but its value is never read.
+src/components/SettingsModal.tsx(12,8): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/TerminalOutput.tsx(2,41): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/TerminalOutput.tsx(4,25): error TS2307: Cannot find module 'tailwind-merge' or its corresponding type declarations.
+src/components/TerminalOutput.tsx(24,9): error TS6133: 'typeCategoryMap' is declared but its value is never read.
+src/components/TerminalOutput.tsx(142,7): error TS2322: Type '{ children: Element; ref: RefObject<HTMLDivElement | null>; className: string; autoScroll: boolean; role: string; "aria-live": string; "aria-relevant": string; "aria-label": string; }' is not assignable to type 'IntrinsicAttributes & ScrollPanelProps'.
+  Property 'role' does not exist on type 'IntrinsicAttributes & ScrollPanelProps'.
+src/components/hive/ConsciousnessNode.tsx(8,24): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/hive/ConsciousnessNode.tsx(240,13): error TS2322: Type '{ key: string; label: string; value: number; type: "glitch" | "awareness" | "sentience" | "momentum" | "saturation" | undefined; size: "medium"; delay: number; }' is not assignable to type 'IntrinsicAttributes & ConsciousnessNodeProps'.
+  Property 'delay' does not exist on type 'IntrinsicAttributes & ConsciousnessNodeProps'.
+src/components/hive/ContextualNodes.tsx(9,41): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/hive/GlitchOverlay.tsx(9,24): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/hive/GlitchOverlay.tsx(26,24): error TS2554: Expected 1 arguments, but got 0.
+src/components/hive/GlitchOverlay.tsx(212,33): error TS2304: Cannot find name 'useState'.
+src/components/hive/HiveMindLayout.tsx(8,24): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/hive/HiveMindLayout.tsx(9,10): error TS6133: 'Brain' is declared but its value is never read.
+src/components/hive/HiveMindLayout.tsx(9,17): error TS6133: 'Activity' is declared but its value is never read.
+src/components/hive/HiveMindLayout.tsx(9,74): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/hive/HiveMindLayout.tsx(10,27): error TS2307: Cannot find module '../types/game' or its corresponding type declarations.
+src/components/hive/HiveMindLayout.tsx(14,1): error TS6133: 'cn' is declared but its value is never read.
+src/components/hive/HiveMindLayout.tsx(198,9): error TS2322: Type '{ children: Element[]; variant: "default"; className: string; }' is not assignable to type 'IntrinsicAttributes & MembranePanelProps'.
+  Property 'className' does not exist on type 'IntrinsicAttributes & MembranePanelProps'.
+src/components/hive/HiveMindLayout.tsx(300,46): error TS2322: Type '{ children: Element; variant: "interactive"; className: string; }' is not assignable to type 'IntrinsicAttributes & MembranePanelProps'.
+  Property 'className' does not exist on type 'IntrinsicAttributes & MembranePanelProps'.
+src/components/hive/MembranePanel.tsx(8,41): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/hive/MembranePanel.tsx(23,3): error TS2339: Property 'className' does not exist on type 'MembranePanelProps'.
+src/components/hive/MycelialBackground.tsx(9,24): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/hive/MycelialBackground.tsx(42,24): error TS2554: Expected 1 arguments, but got 0.
+src/components/hive/PheromoneTrail.tsx(9,41): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/hive/PheromoneTrail.tsx(43,13): error TS6133: 'rect' is declared but its value is never read.
+src/components/hive/PheromoneTrail.tsx(128,3): error TS6133: 'from' is declared but its value is never read.
+src/components/hive/PheromoneTrail.tsx(129,3): error TS6133: 'to' is declared but its value is never read.
+src/components/ui/index.tsx(1,35): error TS6133: 'Variants' is declared but its value is never read.
+src/components/ui/index.tsx(1,51): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/ui/index.tsx(2,19): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/ui/index.tsx(18,7): error TS6133: 'sizeClasses' is declared but its value is never read.
+src/components/ui/index.tsx(44,72): error TS2345: Argument of type 'RefObject<HTMLDivElement | null>' is not assignable to parameter of type 'RefObject<HTMLElement>'.
+  Type 'HTMLDivElement | null' is not assignable to type 'HTMLElement'.
+    Type 'null' is not assignable to type 'HTMLElement'.
+src/components/ui/index.tsx(81,23): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/index.tsx(123,23): error TS2322: Type 'RefObject<HTMLElement> | undefined' is not assignable to type 'Ref<HTMLButtonElement> | undefined'.
+  Type 'RefObject<HTMLElement>' is not assignable to type 'Ref<HTMLButtonElement> | undefined'.
+    Type 'RefObject<HTMLElement>' is not assignable to type 'RefObject<HTMLButtonElement | null>'.
+      Type 'HTMLElement' is missing the following properties from type 'HTMLButtonElement': disabled, form, formAction, formEnctype, and 15 more.
+src/components/ui/index.tsx(187,9): error TS6133: 'prefersReducedMotion' is declared but its value is never read.
+src/components/ui/index.tsx(346,3): error TS6133: 'variant' is declared but its value is never read.
+src/hooks/useCommandAutocomplete.ts(179,11): error TS6133: 'firstWord' is declared but its value is never read.
+src/hooks/useGameEngine.ts(1,61): error TS6133: 'useState' is declared but its value is never read.
+src/hooks/useGameEngine.ts(10,1): error TS6192: All imports in import declaration are unused.
+src/hooks/useGameEngine.ts(15,3): error TS2724: '"../utils/traversalSystem"' has no exported member named 'TraversalMode'. Did you mean 'TRAVERSAL_MODES'?
+src/hooks/useGameEngine.ts(21,3): error TS6133: 'DialogueGraphNavigator' is declared but its value is never read.
+src/hooks/useGameEngine.ts(22,3): error TS6133: 'socraticGenerator' is declared but its value is never read.
+src/hooks/useGameEngine.ts(23,3): error TS2305: Module '"../utils/dialogueSystem"' has no exported member 'logDialogueEvent'.
+src/hooks/useGameEngine.ts(23,3): error TS6133: 'logDialogueEvent' is declared but its value is never read.
+src/hooks/useGameEngine.ts(26,3): error TS6133: 'calculateGain' is declared but its value is never read.
+src/hooks/useGameEngine.ts(28,3): error TS6133: 'shouldPredictGlitch' is declared but its value is never read.
+src/hooks/useGameEngine.ts(29,3): error TS6133: 'logBuildEvent' is declared but its value is never read.
+src/hooks/useGameEngine.ts(34,3): error TS6133: 'generateGlitchPrediction' is declared but its value is never read.
+src/hooks/useGameEngine.ts(35,3): error TS6133: 'generateGlitchEffect' is declared but its value is never read.
+src/hooks/useGameEngine.ts(37,3): error TS6133: 'logGlitchEvent' is declared but its value is never read.
+src/hooks/useGameEngine.ts(148,7): error TS6133: 'GLITCH_EFFECTS' is declared but its value is never read.
+src/hooks/useGameEngine.ts(758,30): error TS2554: Expected 4 arguments, but got 2.
+src/hooks/useGameEngine.ts(822,25): error TS2554: Expected 4 arguments, but got 3.
+src/hooks/useGameEngine.ts(845,13): error TS2322: Type '"SET_PENDING_ENCOUNTER"' is not assignable to type '"COMMAND_EXECUTE" | "STATE_TRANSITION" | "PERSIST_REQUEST" | "PERSIST_COMPLETE" | "PERSIST_ERROR" | "TICK" | "LOAD_COMPLETE" | "RESET" | "CLEAR_OUTPUT"'.
+src/hooks/useGameEngine.ts(847,15): error TS2353: Object literal may only specify known properties, and 'encounter' does not exist in type '{ command: string; timestamp: number; gameId: string; } | { mutations: StateMutation[]; gameId: string; sideEffects?: GameEvent[] | undefined; } | { slot: "auto" | "manual" | "quicksave"; gameId: string; } | ... 5 more ... | { ...; }'.
+src/hooks/useGameEngine.ts(866,27): error TS2345: Argument of type '{ player_intent: "move"; system_response: "encounter"; outcome_variance: number; traversal_mode: "walk" | "crawl" | "burrow"; encounter_type: EncounterType; timestamp: number; game_id: string; }' is not assignable to parameter of type 'TraversalTelemetry'.
+  Type '{ player_intent: "move"; system_response: "encounter"; outcome_variance: number; traversal_mode: "walk" | "crawl" | "burrow"; encounter_type: EncounterType; timestamp: number; game_id: string; }' is missing the following properties from type 'TraversalTelemetry': momentum_before, momentum_after, stance_activated
+src/hooks/useGameEngine.ts(876,27): error TS2345: Argument of type '{ player_intent: "move"; system_response: "success"; outcome_variance: number; traversal_mode: "walk" | "crawl" | "burrow"; timestamp: number; game_id: string; }' is not assignable to parameter of type 'TraversalTelemetry'.
+  Type '{ player_intent: "move"; system_response: "success"; outcome_variance: number; traversal_mode: "walk" | "crawl" | "burrow"; timestamp: number; game_id: string; }' is missing the following properties from type 'TraversalTelemetry': momentum_before, momentum_after, stance_activated
+src/hooks/useGameEngine.ts(1332,24): error TS6133: 'target' is declared but its value is never read.
+src/hooks/useGameEngine.ts(1497,16): error TS2322: Type '"TRAVERSAL_MODE_CHANGE"' is not assignable to type '"COMMAND_EXECUTE" | "STATE_TRANSITION" | "PERSIST_REQUEST" | "PERSIST_COMPLETE" | "PERSIST_ERROR" | "TICK" | "LOAD_COMPLETE" | "RESET" | "CLEAR_OUTPUT"'.
+src/hooks/useGameEngine.ts(1497,58): error TS2353: Object literal may only specify known properties, and 'mode' does not exist in type '{ command: string; timestamp: number; gameId: string; } | { mutations: StateMutation[]; gameId: string; sideEffects?: GameEvent[] | undefined; } | { slot: "auto" | "manual" | "quicksave"; gameId: string; } | ... 5 more ... | { ...; }'.
+src/hooks/useGameEngine.ts(1509,7): error TS2322: Type '"change_mode"' is not assignable to type '"move" | "success" | "encounter" | "momentum_build"'.
+src/hooks/useGameEngine.ts(1618,48): error TS2339: Property 'embracePrediction' does not exist on type 'GlitchPredictionManager'.
+src/hooks/useGameEngine.ts(1624,18): error TS2322: Type '"FLAG_SET"' is not assignable to type '"COMMAND_EXECUTE" | "STATE_TRANSITION" | "PERSIST_REQUEST" | "PERSIST_COMPLETE" | "PERSIST_ERROR" | "TICK" | "LOAD_COMPLETE" | "RESET" | "CLEAR_OUTPUT"'.
+src/hooks/useGameEngine.ts(1630,18): error TS2322: Type '"AWARENESS_CHANGE"' is not assignable to type '"COMMAND_EXECUTE" | "STATE_TRANSITION" | "PERSIST_REQUEST" | "PERSIST_COMPLETE" | "PERSIST_ERROR" | "TICK" | "LOAD_COMPLETE" | "RESET" | "CLEAR_OUTPUT"'.
+src/hooks/useGameEngine.ts(1631,18): error TS2322: Type '"GLITCH_SUPPRESSION"' is not assignable to type '"COMMAND_EXECUTE" | "STATE_TRANSITION" | "PERSIST_REQUEST" | "PERSIST_COMPLETE" | "PERSIST_ERROR" | "TICK" | "LOAD_COMPLETE" | "RESET" | "CLEAR_OUTPUT"'.
+src/hooks/useGameEngine.ts(1631,57): error TS2353: Object literal may only specify known properties, and 'suppressed' does not exist in type '{ command: string; timestamp: number; gameId: string; } | { mutations: StateMutation[]; gameId: string; sideEffects?: GameEvent[] | undefined; } | { slot: "auto" | "manual" | "quicksave"; gameId: string; } | ... 5 more ... | { ...; }'.
+src/hooks/useGameEngine.ts(1639,20): error TS2322: Type '"GLITCH_SUPPRESSION"' is not assignable to type '"COMMAND_EXECUTE" | "STATE_TRANSITION" | "PERSIST_REQUEST" | "PERSIST_COMPLETE" | "PERSIST_ERROR" | "TICK" | "LOAD_COMPLETE" | "RESET" | "CLEAR_OUTPUT"'.
+src/hooks/useGameEngine.ts(1639,59): error TS2353: Object literal may only specify known properties, and 'suppressed' does not exist in type '{ command: string; timestamp: number; gameId: string; } | { mutations: StateMutation[]; gameId: string; sideEffects?: GameEvent[] | undefined; } | { slot: "auto" | "manual" | "quicksave"; gameId: string; } | ... 5 more ... | { ...; }'.
+src/hooks/useGameEngine.ts(1663,18): error TS2322: Type '"RESOLVE_ENCOUNTER"' is not assignable to type '"COMMAND_EXECUTE" | "STATE_TRANSITION" | "PERSIST_REQUEST" | "PERSIST_COMPLETE" | "PERSIST_ERROR" | "TICK" | "LOAD_COMPLETE" | "RESET" | "CLEAR_OUTPUT"'.
+src/hooks/useGameEngine.ts(1663,56): error TS2353: Object literal may only specify known properties, and 'choiceIndex' does not exist in type '{ command: string; timestamp: number; gameId: string; } | { mutations: StateMutation[]; gameId: string; sideEffects?: GameEvent[] | undefined; } | { slot: "auto" | "manual" | "quicksave"; gameId: string; } | ... 5 more ... | { ...; }'.
+src/hooks/useGameEngine.ts(1713,16): error TS2322: Type '"RESOLVE_ENCOUNTER"' is not assignable to type '"COMMAND_EXECUTE" | "STATE_TRANSITION" | "PERSIST_REQUEST" | "PERSIST_COMPLETE" | "PERSIST_ERROR" | "TICK" | "LOAD_COMPLETE" | "RESET" | "CLEAR_OUTPUT"'.
+src/hooks/useGameEngine.ts(1713,54): error TS2353: Object literal may only specify known properties, and 'choiceIndex' does not exist in type '{ command: string; timestamp: number; gameId: string; } | { mutations: StateMutation[]; gameId: string; sideEffects?: GameEvent[] | undefined; } | { slot: "auto" | "manual" | "quicksave"; gameId: string; } | ... 5 more ... | { ...; }'.
+src/hooks/useGameEngine.ts(1716,39): error TS6133: 'newSettings' is declared but its value is never read.
+src/reducers/gameReducer.ts(287,18): error TS6133: 'payload' is declared but its value is never read.
+src/reducers/gameReducer.ts(346,24): error TS6133: 'leveledUp' is declared but its value is never read.
+src/reducers/gameReducer.ts(366,12): error TS7053: Element implicitly has an 'any' type because expression of type '"none" | "observer" | "connector" | "explorer"' can't be used to index type '{ observer: SkillNodeState; connector: SkillNodeState; explorer: SkillNodeState; }'.
+  Property 'none' does not exist on type '{ observer: SkillNodeState; connector: SkillNodeState; explorer: SkillNodeState; }'.
+src/reducers/gameReducer.ts(367,29): error TS7053: Element implicitly has an 'any' type because expression of type '"none" | "observer" | "connector" | "explorer"' can't be used to index type '{ observer: SkillNodeState; connector: SkillNodeState; explorer: SkillNodeState; }'.
+  Property 'none' does not exist on type '{ observer: SkillNodeState; connector: SkillNodeState; explorer: SkillNodeState; }'.
+src/reducers/gameReducer.ts(479,5): error TS2322: Type '{ [x: string]: { relationship: number; trustLevel: number; socraticProgress: number; emotionalState: "neutral" | "curious" | "suspicious" | "trusting" | "awakened"; topicsDiscussed: string[]; awakeningThreshold: number; lastInteraction?: number; } | { ...; }; }' is not assignable to type 'Record<string, { relationship: number; trustLevel: number; socraticProgress: number; emotionalState: "neutral" | "curious" | "suspicious" | "trusting" | "awakened"; topicsDiscussed: string[]; awakeningThreshold: number; lastInteraction?: number | undefined; }>'.
+  'string' index signatures are incompatible.
+    Type '{ relationship: number; trustLevel: number; socraticProgress: number; emotionalState: "neutral" | "curious" | "suspicious" | "trusting" | "awakened"; topicsDiscussed: string[]; awakeningThreshold: number; lastInteraction?: number | undefined; } | { ...; }' is not assignable to type '{ relationship: number; trustLevel: number; socraticProgress: number; emotionalState: "neutral" | "curious" | "suspicious" | "trusting" | "awakened"; topicsDiscussed: string[]; awakeningThreshold: number; lastInteraction?: number | undefined; }'.
+      Type '{ relationship: number; trustLevel: number; socraticProgress: number; emotionalState: string; topicsDiscussed: string[]; awakeningThreshold: number; lastInteraction?: number; }' is not assignable to type '{ relationship: number; trustLevel: number; socraticProgress: number; emotionalState: "neutral" | "curious" | "suspicious" | "trusting" | "awakened"; topicsDiscussed: string[]; awakeningThreshold: number; lastInteraction?: number | undefined; }'.
+        Types of property 'emotionalState' are incompatible.
+          Type 'string' is not assignable to type '"neutral" | "curious" | "suspicious" | "trusting" | "awakened"'.
+src/reducers/gameReducer.ts(624,16): error TS6133: 'hashState' is declared but its value is never read.
+src/test/setup.ts(1,10): error TS6133: 'expect' is declared but its value is never read.
+src/test/setup.ts(1,39): error TS2307: Cannot find module 'vitest' or its corresponding type declarations.
+src/test/setup.ts(12,37): error TS7006: Parameter 'query' implicitly has an 'any' type.
+src/utils/__tests__/achievementSystem.test.ts(1,50): error TS2307: Cannot find module 'vitest' or its corresponding type declarations.
+src/utils/__tests__/achievementSystem.test.ts(2,35): error TS2307: Cannot find module '../utils/achievementSystem' or its corresponding type declarations.
+src/utils/__tests__/dialogueSystem.test.ts(1,38): error TS2307: Cannot find module 'vitest' or its corresponding type declarations.
+src/utils/__tests__/dialogueSystem.test.ts(20,42): error TS2339: Property 'navigate' does not exist on type 'typeof DialogueGraphNavigator'.
+src/utils/__tests__/dialogueSystem.test.ts(25,42): error TS2339: Property 'generate' does not exist on type 'SocraticDialogueGenerator'.
+src/utils/__tests__/dialogueSystem.test.ts(34,11): error TS6133: 'initialState' is declared but its value is never read.
+src/utils/__tests__/dialogueSystem.test.ts(36,25): error TS2339: Property 'updateState' does not exist on type 'NPCStateManager'.
+src/utils/__tests__/dialogueSystem.test.ts(37,23): error TS2339: Property 'updateState' does not exist on type 'NPCStateManager'.
+src/utils/__tests__/masterySystem.test.ts(1,50): error TS2307: Cannot find module 'vitest' or its corresponding type declarations.
+src/utils/__tests__/masterySystem.test.ts(2,10): error TS2724: '"../masterySystem"' has no exported member named 'masterySystem'. Did you mean 'MasteryState'?
+src/utils/__tests__/masterySystem.test.ts(35,11): error TS6133: 'initialXp' is declared but its value is never read.
+src/utils/__tests__/saveSystem.test.ts(1,55): error TS6133: 'vi' is declared but its value is never read.
+src/utils/__tests__/saveSystem.test.ts(1,65): error TS2307: Cannot find module 'vitest' or its corresponding type declarations.
+src/utils/__tests__/saveSystem.test.ts(2,10): error TS6133: 'saveGame' is declared but its value is never read.
+src/utils/__tests__/saveSystem.test.ts(2,20): error TS6133: 'loadGame' is declared but its value is never read.
+src/utils/__tests__/saveSystem.test.ts(30,35): error TS2554: Expected 0 arguments, but got 1.
+src/utils/__tests__/traversalSystem.test.ts(1,38): error TS2307: Cannot find module 'vitest' or its corresponding type declarations.
+src/utils/__tests__/traversalSystem.test.ts(5,3): error TS2305: Module '"../traversalSystem"' has no exported member 'calculateMomentumDecay'.
+src/utils/__tests__/traversalSystem.test.ts(6,3): error TS2305: Module '"../traversalSystem"' has no exported member 'calculateStanceBonus'.
+src/utils/__tests__/traversalSystem.test.ts(29,28): error TS2339: Property 'THRESHOLD_STANCE' does not exist on type '{ MAX_MOMENTUM: number; MOMENTUM_GAIN_PER_MOVE: number; MOMENTUM_DECAY_ON_SWITCH: number; MOMENTUM_DECAY_ON_ACTION: number; STANCE_THRESHOLD: number; STANCE_DURATION_MS: number; MASTERY_XP_PER_MOVE: number; MASTERY_XP_BONUS_AT_PEAK: number; }'.
+src/utils/achievementSystem.ts(3,46): error TS6133: 'updateAchievementProgress' is declared but its value is never read.
+src/utils/achievementSystem.ts(234,27): error TS6133: 'event' is declared but its value is never read.
+src/utils/achievementSystem.ts(238,27): error TS6133: 'event' is declared but its value is never read.
+src/utils/achievementSystem.ts(242,29): error TS6133: 'event' is declared but its value is never read.
+src/utils/achievementSystem.ts(267,52): error TS6133: 'state' is declared but its value is never read.
+src/utils/audio.ts(1,24): error TS6133: 'GameEvent' is declared but its value is never read.
+src/utils/audio.ts(5,1): error TS6133: 'formicLanguage' is declared but its value is never read.
+src/utils/audio.ts(84,105): error TS2339: Property 'intensity' does not exist on type '{ type: "STATE_CHANGED"; changes: StateMutation[]; timestamp: number; state?: GameState | undefined; } | { type: "ROOM_ENTER"; roomId: string; previousRoom: string; } | ... 6 more ... | { ...; }'.
+  Property 'intensity' does not exist on type '{ type: "STATE_CHANGED"; changes: StateMutation[]; timestamp: number; state?: GameState | undefined; }'.
+src/utils/audio.ts(85,21): error TS2339: Property 'intensity' does not exist on type '{ type: "STATE_CHANGED"; changes: StateMutation[]; timestamp: number; state?: GameState | undefined; } | { type: "ROOM_ENTER"; roomId: string; previousRoom: string; } | ... 6 more ... | { ...; }'.
+  Property 'intensity' does not exist on type '{ type: "STATE_CHANGED"; changes: StateMutation[]; timestamp: number; state?: GameState | undefined; }'.
+src/utils/audio.ts(93,88): error TS2339: Property 'previousRoom' does not exist on type '{ type: "STATE_CHANGED"; changes: StateMutation[]; timestamp: number; state?: GameState | undefined; } | { type: "ROOM_ENTER"; roomId: string; previousRoom: string; } | ... 6 more ... | { ...; }'.
+  Property 'previousRoom' does not exist on type '{ type: "STATE_CHANGED"; changes: StateMutation[]; timestamp: number; state?: GameState | undefined; }'.
+src/utils/audio.ts(93,113): error TS2339: Property 'roomId' does not exist on type '{ type: "STATE_CHANGED"; changes: StateMutation[]; timestamp: number; state?: GameState | undefined; } | { type: "ROOM_ENTER"; roomId: string; previousRoom: string; } | ... 6 more ... | { ...; }'.
+  Property 'roomId' does not exist on type '{ type: "STATE_CHANGED"; changes: StateMutation[]; timestamp: number; state?: GameState | undefined; }'.
+src/utils/audio.ts(109,11): error TS6133: 'cleanup' is declared but its value is never read.
+src/utils/audio.ts(119,44): error TS6133: 'type' is declared but its value is never read.
+src/utils/audioTest.ts(11,33): error TS2307: Cannot find module './utils/elevenLabsAudio' or its corresponding type declarations.
+src/utils/audioTest.ts(12,35): error TS2307: Cannot find module './utils/liminalSoundscape' or its corresponding type declarations.
+src/utils/audioTest.ts(13,32): error TS2307: Cannot find module './utils/formicLanguage' or its corresponding type declarations.
+src/utils/audioTest.ts(14,29): error TS2307: Cannot find module './utils/audio' or its corresponding type declarations.
+src/utils/audioTest.ts(109,9): error TS6133: 'narrator' is declared but its value is never read.
+src/utils/audioTest.ts(169,20): error TS2304: Cannot find name 'PREGENERATED_PHRASES'.
+src/utils/audioTest.ts(169,61): error TS2304: Cannot find name 'PREGENERATED_PHRASES'.
+src/utils/buildSystem.ts(12,21): error TS6133: 'StateMutation' is declared but its value is never read.
+src/utils/buildSystem.ts(12,75): error TS6133: 'SkillNodeState' is declared but its value is never read.
+src/utils/buildSystem.ts(663,3): error TS6133: 'roomId' is declared but its value is never read.
+src/utils/cn.ts(2,25): error TS2307: Cannot find module 'tailwind-merge' or its corresponding type declarations.
+src/utils/dialogueSystem.ts(11,36): error TS6133: 'BuildArchetype' is declared but its value is never read.
+src/utils/elevenLabsAudio.ts(21,1): error TS6133: 'eventBus' is declared but its value is never read.
+src/utils/elevenLabsAudio.ts(81,11): error TS6133: 'initialized' is declared but its value is never read.
+src/utils/elevenLabsAudio.ts(186,5): error TS2322: Type 'AudioBuffer | undefined' is not assignable to type 'AudioBuffer | null'.
+  Type 'undefined' is not assignable to type 'AudioBuffer | null'.
+src/utils/enhancedEncounterSystem.ts(8,21): error TS2305: Module '"../types/game"' has no exported member 'TraversalMode'.
+src/utils/enhancedEncounterSystem.ts(182,5): error TS6133: 'encounter' is declared but its value is never read.
+src/utils/enhancedEncounterSystem.ts(472,22): error TS7053: Element implicitly has an 'any' type because expression of type 'TraversalMode' can't be used to index type '{ walk: { speed: number; }; crawl: { speed: number; }; burrow: { speed: number; }; }'.
+src/utils/enhancedGameEngine.ts(13,48): error TS2305: Module '"../types/game"' has no exported member 'TraversalMode'.
+src/utils/enhancedGameEngine.ts(18,23): error TS6133: 'chainDetector' is declared but its value is never read.
+src/utils/enhancedGameEngine.ts(19,10): error TS6133: 'encounterUIManager' is declared but its value is never read.
+src/utils/enhancedGameEngine.ts(53,23): error TS6133: 'roomId' is declared but its value is never read.
+src/utils/enhancedGameEngine.ts(53,31): error TS6133: 'timestamp' is declared but its value is never read.
+src/utils/enhancedGameEngine.ts(67,9): error TS6133: 'flowMultiplier' is declared but its value is never read.
+src/utils/enhancedGameEngine.ts(69,9): error TS6133: 'finalSentience' is declared but its value is never read.
+src/utils/enhancedGameEngine.ts(163,17): error TS6133: 'fromRoom' is declared but its value is never read.
+src/utils/enhancedGameEngine.ts(163,27): error TS6133: 'toRoom' is declared but its value is never read.
+src/utils/eventBus.ts(10,11): error TS6196: 'EventSubscription' is declared but never used.
+src/utils/feedbackEngine.ts(8,21): error TS2305: Module '"../types/game"' has no exported member 'TraversalMode'.
+src/utils/feedbackEngine.ts(193,17): error TS6133: 'key' is declared but its value is never read.
+src/utils/feedbackEngine.ts(209,5): error TS6133: 'rng' is declared but its value is never read.
+src/utils/feedbackEngine.ts(252,5): error TS6133: 'rng' is declared but its value is never read.
+src/utils/feedbackEngine.ts(325,11): error TS2322: Type 'number[]' is not assignable to type 'number'.
+src/utils/feedbackEngine.ts(355,11): error TS2322: Type 'number[]' is not assignable to type 'number'.
+src/utils/flowStateSystem.ts(94,5): error TS6133: 'gameState' is declared but its value is never read.
+src/utils/flowStateSystem.ts(220,9): error TS2741: Property 'type' is missing in type '{ threshold: number; multiplier: number; description: string; }' but required in type 'FlowBonus'.
+src/utils/flowStateSystem.ts(222,9): error TS2741: Property 'type' is missing in type '{ threshold: number; multiplier: number; description: string; }' but required in type 'FlowBonus'.
+src/utils/flowStateSystem.ts(224,9): error TS2741: Property 'type' is missing in type '{ threshold: number; multiplier: number; description: string; }' but required in type 'FlowBonus'.
+src/utils/flowStateSystem.ts(226,9): error TS2741: Property 'type' is missing in type '{ threshold: number; multiplier: number; description: string; }' but required in type 'FlowBonus'.
+src/utils/formicLanguage.ts(19,7): error TS6133: 'PHONEMES' is declared but its value is never read.
+src/utils/glitchSystem.ts(188,53): error TS6133: 'context' is declared but its value is never read.
+src/utils/glitchSystem.ts(486,11): error TS6133: 'lastGlitchTime' is declared but its value is never read.
+src/utils/inputBuffer.ts(113,47): error TS2345: Argument of type '{ timestamp: number; }' is not assignable to parameter of type 'QueuedCommand'.
+  Type '{ timestamp: number; }' is missing the following properties from type 'QueuedCommand': id, command, processed
+src/utils/liminalSoundscape.ts(658,26): error TS6133: 'layerId' is declared but its value is never read.
+src/utils/masterySystem.ts(8,21): error TS2305: Module '"../types/game"' has no exported member 'TraversalMode'.
+src/utils/masterySystem.ts(8,21): error TS6133: 'TraversalMode' is declared but its value is never read.
+src/utils/masterySystem.ts(8,36): error TS6133: 'EmbraceMode' is declared but its value is never read.
+src/utils/masterySystem.ts(8,49): error TS6133: 'BuildArchetype' is declared but its value is never read.
+src/utils/masterySystem.ts(8,65): error TS6133: 'ComboTier' is declared but its value is never read.
+src/utils/masterySystem.ts(418,5): error TS6133: 'gameState' is declared but its value is never read.
+src/utils/motionPresets.ts(8,43): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/utils/progressionSystem.ts(13,64): error TS6133: 'ComboTier' is declared but its value is never read.
+src/utils/progressionSystem.ts(22,3): error TS6133: 'ARCHETYPE_PROFILES' is declared but its value is never read.
+src/utils/progressionSystem.ts(24,3): error TS6133: 'COMBO_CONFIG' is declared but its value is never read.
+src/utils/progressionSystem.ts(34,3): error TS6133: 'getAwakeningPreview' is declared but its value is never read.
+src/utils/progressionSystem.ts(39,3): error TS6133: 'hasFlowBonus' is declared but its value is never read.
+src/utils/progressionSystem.ts(218,9): error TS6133: 'recoveredSaturation' is declared but its value is never read.
+src/utils/progressionSystem.ts(276,9): error TS2352: Conversion of type 'number' to type 'BuildArchetype' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+src/utils/progressionSystem.ts(278,9): error TS7053: Element implicitly has an 'any' type because expression of type 'BuildArchetype' can't be used to index type '{ observer: SkillNodeState; connector: SkillNodeState; explorer: SkillNodeState; }'.
+  Property 'none' does not exist on type '{ observer: SkillNodeState; connector: SkillNodeState; explorer: SkillNodeState; }'.
+src/utils/progressionSystem.ts(434,11): error TS6133: 'prediction' is declared but its value is never read.
+src/utils/progressionSystem.ts(603,9): error TS6133: 'saturationResult' is declared but its value is never read.
+src/utils/progressionSystem.ts(678,17): error TS2304: Cannot find name 'buildResult'.
+src/utils/security.ts(36,28): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(algorithm: AlgorithmIdentifier | EcdhKeyDeriveParams | HkdfParams | Pbkdf2Params, baseKey: CryptoKey, derivedKeyType: AlgorithmIdentifier | ... 3 more ... | AesDerivedKeyParams, extractable: boolean, keyUsages: Iterable<...>): Promise<...>', gave the following error.
+    Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'BufferSource'.
+      Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'ArrayBufferView<ArrayBuffer>'.
+        Types of property 'buffer' are incompatible.
+          Type 'ArrayBufferLike' is not assignable to type 'ArrayBuffer'.
+            Type 'SharedArrayBuffer' is not assignable to type 'ArrayBuffer'.
+              Types of property '[Symbol.toStringTag]' are incompatible.
+                Type '"SharedArrayBuffer"' is not assignable to type '"ArrayBuffer"'.
+  Overload 2 of 2, '(algorithm: AlgorithmIdentifier | EcdhKeyDeriveParams | HkdfParams | Pbkdf2Params, baseKey: CryptoKey, derivedKeyType: AlgorithmIdentifier | ... 3 more ... | AesDerivedKeyParams, extractable: boolean, keyUsages: KeyUsage[]): Promise<...>', gave the following error.
+    Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'BufferSource'.
+      Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'ArrayBufferView<ArrayBuffer>'.
+        Types of property 'buffer' are incompatible.
+          Type 'ArrayBufferLike' is not assignable to type 'ArrayBuffer'.
+            Type 'SharedArrayBuffer' is not assignable to type 'ArrayBuffer'.
+              Types of property '[Symbol.toStringTag]' are incompatible.
+                Type '"SharedArrayBuffer"' is not assignable to type '"ArrayBuffer"'.
+src/utils/security.ts(96,11): error TS6133: 'key' is declared but its value is never read.
+src/utils/telemetry.ts(8,21): error TS2305: Module '"../types/game"' has no exported member 'TraversalMode'.
+src/utils/telemetry.ts(320,7): error TS2739: Type '{ [x: string]: number; }' is missing the following properties from type '{ traversal: number; glitch: number; dialogue: number; build: number; }': traversal, glitch, dialogue, build
+src/utils/telemetry.ts(322,36): error TS2551: Property 'calculateFlowStateDuration' does not exist on type 'TelemetryManager'. Did you mean 'calculateFlowStateDurationMs'?
+src/utils/telemetry.ts(329,11): error TS6133: 'calculateFlowStateDurationMs' is declared but its value is never read.
+src/utils/traversalSystem.ts(11,36): error TS2305: Module '"../types/game"' has no exported member 'TraversalMode'.
+src/utils/traversalSystem.ts(11,51): error TS6133: 'ActionType' is declared but its value is never read.
+src/utils/traversalSystem.ts(86,3): error TS6133: 'modeMastery' is declared but its value is never read.
+src/utils/traversalSystem.ts(114,41): error TS2304: Cannot find name 'STANCE_THRESHOLD'.
+src/utils/traversalSystem.ts(114,79): error TS2304: Cannot find name 'STANCE_THRESHOLD'.
+src/utils/traversalSystem.ts(482,5): error TS2353: Object literal may only specify known properties, and 'method' does not exist in type '{ success: boolean; partial: boolean; description: string; mutations: StateMutation[]; canProceed: boolean; rewardMultiplier: number; }'.
+src/utils/traversalSystem.ts(548,20): error TS2339: Property 'method' does not exist on type '{ success: boolean; partial: boolean; description: string; mutations: StateMutation[]; canProceed: boolean; rewardMultiplier: number; }'.
+vite.config.ts(3,25): error TS2307: Cannot find module '@tailwindcss/vite' or its corresponding type declarations.
+vite.config.ts(4,19): error TS2307: Cannot find module '@vitejs/plugin-react' or its corresponding type declarations.
+vite.config.ts(5,30): error TS2307: Cannot find module 'vite' or its corresponding type declarations.
+vite.config.ts(6,1): error TS6133: 'getViteConfig' is declared but its value is never read.
+vite.config.ts(6,10): error TS2305: Module '"vitest/config"' has no exported member 'getViteConfig'.
+vite.config.ts(7,32): error TS2307: Cannot find module 'vite-plugin-singlefile' or its corresponding type declarations.
+[exit 2]
